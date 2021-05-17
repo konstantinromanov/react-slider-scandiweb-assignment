@@ -1,5 +1,7 @@
 import React, { Component, Fragment } from "react";
 import Card from "./Card.js";
+import leftArrow from '../images/left-chevron.png';
+import rightArrow from '../images/right-chevron.png';
 
 
 class Deck extends Component {
@@ -94,6 +96,12 @@ class Deck extends Component {
         
         /* ********************************************************** */
 
+        /* ***************************** Touch navigation ******************* */
+
+        this.startTouchPostition = 0.0;
+        this.updatedPosition = 0.0;
+        this.speedModifier = 0.8;
+
         this.lastPositions = [];
         this.rightBoundary = parseFloat(this.images.children[this.numberOfCardsByIndex].style.left) + this.newWidth;
         this.leftBoundary = parseFloat(this.images.children[0].style.left) - this.newWidth;
@@ -101,6 +109,18 @@ class Deck extends Component {
         for (let i = 0; i < this.images.children.length; i++) {
             this.lastPositions.push(parseFloat(this.images.children[i].style.left));            
         }
+
+        this.touchArea.addEventListener("touchstart", this.handleTouchStart, {
+            passive: false,
+          });
+        this.touchArea.addEventListener("touchmove", this.handleTouchMove, {
+        passive: false,
+        });
+        this.touchArea.addEventListener("touchend", this.handleTouchEnd, {
+        passive: false,
+        });
+
+        /* ****************************************************************** */
 
         /* ********************* Button Navigation ****************** */
 
@@ -123,7 +143,17 @@ class Deck extends Component {
 
         /* ********************************************************** */
         
+        /* ***************************** Snap Back Logic ******************* */
+
+        this.snapInProgress = false;
+        this.distanceToScroll = 0.0;
+        this.seed = 0.0;
+        this.snapSpeedModifier = 0.05;
+
+      /* ****************************************************************** */
+
     }
+    
 
     updateSelection = () => {
         for (let i = 0; i < this.images.children.length; i++) {
@@ -176,6 +206,100 @@ class Deck extends Component {
         }
     }
 
+    /* ***************************** Snap Back Logic ******************* */
+
+    snapBack = () => {
+        this.snapInProgress = true;
+
+        const adjustedPositions = this.lastPositions.map(position => Math.abs(position - (this.newWidth / 2)));
+        const closestCardByIndex = adjustedPositions.indexOf(Math.min(...adjustedPositions));
+
+        this.distanceToScroll = adjustedPositions[closestCardByIndex] * 
+        (this.lastPositions[closestCardByIndex] > (this.newWidth / 2) ? -1.0 : 1.0);       
+
+            if (this.distanceToScroll < 0 && closestCardByIndex !== this.middleCardByIndex) {
+                this.currentCard = (this.currentCard === this.numberOfCardsByIndex) ? 0 : ++this.currentCard; 
+            } 
+            if (this.distanceToScroll > 0 && closestCardByIndex !== this.middleCardByIndex) {
+                this.currentCard = (this.currentCard === 0) ? this.numberOfCardsByIndex : --this.currentCard;  
+            } 
+
+        this.animateSnap();
+    };
+
+    animateSnap = () => {
+        this.seed = parseFloat(this.seed.toFixed(2));
+
+        let percentageToMove = Math.pow(this.seed, 2.0);
+        percentageToMove = parseFloat(percentageToMove.toFixed(2));
+
+        if (this.seed > 1) {
+        
+        for (let i = 0; i < this.images.children.length; i++) {
+            this.updatedPosition = this.lastPositions[i] + this.distanceToScroll;
+            this.images.children[i].style.left = `${this.updatedPosition}px`; 
+            this.lastPositions[i] = this.updatedPosition;     
+        }
+
+        this.handleBoundaries();
+        this.updateSelection();
+
+        this.snapInProgress = false;
+        this.seed = 0.0;
+
+        return;
+        }
+
+        for (let i = 0; i < this.images.children.length; i++) {
+        this.updatedPosition = this.lastPositions[i] + (percentageToMove * this.distanceToScroll);
+        this.images.children[i].style.left = `${this.updatedPosition}px`;      
+        }
+
+        this.seed += 1 * this.snapSpeedModifier;
+        requestAnimationFrame(this.animateSnap);
+    }
+
+  /* ****************************************************************** */
+
+  /* ***************************** Touch navigation ******************* */
+
+  handleTouchStart = (event) => {
+    if (this.snapInProgress) return;
+
+    this.startTouchPostition = event.changedTouches[0].screenX;
+
+    for (let i = 0; i < this.images.children.length; i++) {
+      this.images.children[i].style.transitionDuration = "0.0s";
+    }
+  };
+
+  handleTouchMove = (event) => {
+    event.preventDefault();
+    if (this.snapInProgress) return;
+
+    const currentTouchPosition = event.changedTouches[0].screenX;
+    let difference = currentTouchPosition - this.startTouchPostition;
+    difference *= this.speedModifier;
+
+    this.startTouchPostition = currentTouchPosition;
+
+    for (let i = 0; i < this.images.children.length; i++) {
+      this.updatedPosition = this.lastPositions[i] + difference;
+      this.images.children[i].style.left = `${this.updatedPosition}px`;
+      this.lastPositions[i] = this.updatedPosition;
+    }
+
+    this.handleBoundaries();
+  };
+
+  handleTouchEnd = () => {
+    if (this.snapInProgress) return;
+
+    this.snapBack();
+  };
+
+  /* ****************************************************************** */
+
     /* ********************* Button Navigation ****************** */   
 
     handleNext = () => {
@@ -199,7 +323,7 @@ class Deck extends Component {
 
         setTimeout(() => {
             this.scrollInProgress = false;
-            this.startAutoplay();
+            //this.startAutoplay();
         }, 200);
     }
 
@@ -224,7 +348,7 @@ class Deck extends Component {
 
         setTimeout(() => {
             this.scrollInProgress = false;
-            this.startAutoplay();
+            //this.startAutoplay();
         }, 200);
     }
     
@@ -256,7 +380,7 @@ class Deck extends Component {
         this.currentCard = newCard;
 
         this.updateSelection();
-        this.startAutoplay();
+        //this.startAutoplay();
     }
         
     /* ********************************************************** */
@@ -270,7 +394,7 @@ class Deck extends Component {
         this.autoplayTimeoutId = setTimeout(() => {
             this.autoplayIntervalId = setInterval(() => {
                 for (let i = 0; i < this.images.children.length; i++) {
-                    this.images.children[i].style.transitionDuration = "0.0s";
+                    this.images.children[i].style.transitionDuration = "0.5s";
         
                     const updatedPosition = this.lastPositions[i] - this.newWidth;
                     
@@ -282,7 +406,7 @@ class Deck extends Component {
         
                 this.handleBoundaries();
                 this.updateSelection();
-            }, 1100)
+            }, 12100)
         }, 1200);
     }
         
@@ -292,14 +416,15 @@ class Deck extends Component {
         return (
             <Fragment>
                 <div ref={refId => this.navButtonsContainer = refId} style={styles.navButtonsContainer}>
-                    <img onClick={this.handlePrev} ref={refId => this.buttonPrev = refId} style={styles.navButton} src="./images/left-chevron.png" alt="prev" id="prev" />
-                    <img onClick={this.handleNext} ref={refId => this.buttonNext = refId} style={styles.navButton} src="./images/right-chevron.png" alt="next" id="next" />
+                    <img onClick={this.handlePrev} ref={refId => this.buttonPrev = refId} style={styles.navButton} src={leftArrow} alt="prev" id="prev" />
+                    <img onClick={this.handleNext} ref={refId => this.buttonNext = refId} style={styles.navButton} src={rightArrow} alt="next" id="next" />
                 </div>
                 <div ref={refId => this.viewPort = refId} style={styles.viewPort}>
                     <div ref={refId => this.images = refId} style={styles.imagesContainer}> 
                         {this.state.cards}
                     </div>
                 </div>
+                <div ref={(refId) => (this.touchArea = refId)} style={styles.touchArea} className="touchArea"></div>
                 <div onClick={this.handleSelection} ref={refId => this.selectionButtonsContainer = refId} style={styles.selectionButtonsContainer}>
                     {
                         this.state.cards.map((_, i) => {
@@ -323,7 +448,7 @@ const styles = {
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        overflow: "hidden",
+        //overflow: "hidden",
         //backgroundColor: "red"
     },
     imagesContainer: {
@@ -335,6 +460,18 @@ const styles = {
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
+    },
+    touchArea: {
+      margin: 0,
+      padding: 0,
+      width: "100vw",
+      height: "300px",
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      //backgroundColor: "rgba(255, 0, 0, 0.2)",
+      zIndex: 9999,
     },
     navButtonsContainer: {
         margin: 0,
