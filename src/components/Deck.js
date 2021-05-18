@@ -13,7 +13,8 @@ class Deck extends Component {
                 <Card picsum={"https://picsum.photos/800/350"} id="one" key="one" />,
                 <Card picsum={"https://picsum.photos/800/352"} id="two" key="two" />,
                 <Card picsum={"https://picsum.photos/800/353"} id="three" key="three" />,
-                <Card picsum={"https://picsum.photos/800/354"} id="four" key="four" />
+                <Card picsum={"https://picsum.photos/800/354"} id="four" key="four" />,
+                <Card picsum={"https://picsum.photos/800/355"} id="five" key="five" />
             ]
         }
     }
@@ -45,7 +46,7 @@ class Deck extends Component {
         this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.30}px`;
         this.buttonNext.style.width = `${(this.newWidth / 2) * 0.30}px`;
 
-        //this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top}px`;
+        this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top}px`;
                 
         this.selectionButtonsContainer.style.bottom = `${this.images.children.bottom}px`;
 
@@ -142,7 +143,7 @@ class Deck extends Component {
 
         /* ********************* Init Code ************************** */
 
-        //this.selectionButtonsContainer.children[0].click();
+        this.selectionButtonsContainer.children[0].click();
 
         /* ********************************************************** */
         
@@ -157,7 +158,6 @@ class Deck extends Component {
 
     }
     
-
     updateSelection = () => {
         for (let i = 0; i < this.images.children.length; i++) {
             if (i === this.currentCard) {
@@ -192,19 +192,17 @@ class Deck extends Component {
 
         if (this.lastPositions[0] <= this.leftBoundary) {
             const endOfDeck = this.lastPositions[this.numberOfCardsByIndex] + this.newWidth;
-
-            this.images.children[0].style.left = `${endOfDeck}px`;            
+           
+            this.images.children[0].style.left = `${endOfDeck}px`;             
             this.lastPositions[0] = endOfDeck;
-
             this.images.appendChild(this.images.children[0], this.images.children[this.numberOfCardsByIndex]);
             this.lastPositions.splice(this.numberOfCardsByIndex, 0, this.lastPositions.shift());
         }
         if (this.lastPositions[this.numberOfCardsByIndex] >= this.rightBoundary) {
             const beginningOfDeck = this.lastPositions[0] - this.newWidth;
-
-            this.images.children[this.numberOfCardsByIndex].style.left = `${beginningOfDeck}px`;            
+            
+            this.images.children[this.numberOfCardsByIndex].style.left = `${beginningOfDeck}px`;             
             this.lastPositions[this.numberOfCardsByIndex] = beginningOfDeck;
-
             this.images.insertBefore(this.images.children[this.numberOfCardsByIndex], this.images.children[0]);
             this.lastPositions.splice(0, 0, this.lastPositions.pop());
         }
@@ -241,8 +239,7 @@ class Deck extends Component {
             for (let i = 0; i < this.images.children.length; i++) {
                 this.updatedPosition = parseFloat((this.lastPositions[i] + this.distanceToScroll).toFixed(2));
                 this.images.children[i].style.left = `${this.updatedPosition}px`; 
-                this.lastPositions[i] = this.updatedPosition;    
-                console.log(`lastPos${i}`, this.lastPositions[i]);                 
+                this.lastPositions[i] = this.updatedPosition;   
             }
 
             this.handleBoundaries();
@@ -390,7 +387,7 @@ class Deck extends Component {
            this.lastPositions[i] = updatedPosition;
         }
 
-        for (let i = 0; i < Math.abs(this.currentCard - newCard); i++) {
+        for (let i = 0; i < Math.abs(this.currentCard - newCard); i++) {            
             this.handleBoundaries();            
         }
 
@@ -432,20 +429,20 @@ class Deck extends Component {
     render() {
         return (
             <Fragment>
-                <div ref={refId => this.navButtonsContainer = refId} style={styles.navButtonsContainer}>
-                    <img onClick={this.handlePrev} ref={refId => this.buttonPrev = refId} style={styles.navButton} src={leftArrow} alt="prev" id="prev" />
-                    <img onClick={this.handleNext} ref={refId => this.buttonNext = refId} style={styles.navButton} src={rightArrow} alt="next" id="next" />
+                <div ref={refId => this.navButtonsContainer = refId} className="navButtonsContainer">
+                    <img onClick={this.handlePrev} ref={refId => this.buttonPrev = refId} className="navButton" src={leftArrow} alt="prev" id="prev" />
+                    <img onClick={this.handleNext} ref={refId => this.buttonNext = refId} className="navButton" src={rightArrow} alt="next" id="next" />
                 </div>
-                <div ref={refId => this.viewPort = refId} style={styles.viewPort}>
-                    <div ref={refId => this.images = refId} style={styles.imagesContainer}> 
+                <div ref={refId => this.viewPort = refId} className="viewPort">
+                    <div ref={refId => this.images = refId} className="imagesContainer"> 
                         {this.state.cards}
                     </div>
                 </div>
-                <div ref={(refId) => (this.touchArea = refId)} style={styles.touchArea} className="touchArea"></div>
-                <div onClick={this.handleSelection} ref={refId => this.selectionButtonsContainer = refId} style={styles.selectionButtonsContainer}>
+                <div ref={(refId) => (this.touchArea = refId)} className="touchArea"></div>
+                <div onClick={this.handleSelection} ref={refId => this.selectionButtonsContainer = refId} className="selectionButtonsContainer">
                     {
                         this.state.cards.map((_, i) => {
-                            return (<div style={styles.selectionButton} key={i}></div>)
+                            return (<div className="selectionButton" key={i}></div>)
                         })
                     }
                    
@@ -455,90 +452,5 @@ class Deck extends Component {
     }
 }
 
-const styles = {
-    viewPort: {
-        margin: 0,
-        padding: 0,
-        width: "500px",
-        height: "300px",
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        //overflow: "hidden",
-        //backgroundColor: "red"
-    },
-    imagesContainer: {
-        margin: 0,
-        padding: 0,
-        width: "inherit",
-        height: "inherit",
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-    },
-    touchArea: {
-      margin: 0,
-      padding: 0,
-      width: "100vw",
-      height: "300px",
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      //backgroundColor: "rgba(255, 0, 0, 0.2)",
-      zIndex: 9999,
-    },
-    navButtonsContainer: {
-        margin: 0,
-        padding: 0,
-        width: "100vw",        
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        transform: "translate(-50%, -50%)",
-        pointerEvents: "none",
-        zIndex: 99999
-    },
-    navButton: {
-        width: "50%",
-        height: "auto",
-        pointerEvents: "all",
-        cursor: "pointer"
-    },
-    selectionButtonsContainer: {
-        margin: 0,
-        padding: 0,
-        width: "fit-content",
-        height: "fit-content",
-        position: "absolute",
-        bottom: 0,
-        left: "50%",
-        transform: "translateX(-50%)",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        pointerEvents: "none",
-        zIndex: 9999,
-        //backgroundColor: "rgba(0, 0, 255, 0.4)"
-    },
-    selectionButton: {
-        marginRight: "7.5px",
-        marginLeft: "7.5px",
-        padding: 0,
-        width: "20px",
-        height: "20px",
-        borderRadius: "50%",
-        backgroundColor: "grey",
-        pointerEvents: "all",
-        cursor: "pointer"
-    }
-}
 
 export default Deck;
