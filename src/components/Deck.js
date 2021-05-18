@@ -22,6 +22,7 @@ class Deck extends Component {
         this.numberOfCardsByIndex = this.images.children.length - 1;
         this.middleCardByIndex = Math.floor(this.numberOfCardsByIndex / 2);
         this.currentCard = this.middleCardByIndex;
+        
 
         /* ********************* Responsive Code ******************** */
 
@@ -106,6 +107,8 @@ class Deck extends Component {
         this.rightBoundary = parseFloat(this.images.children[this.numberOfCardsByIndex].style.left) + this.newWidth;
         this.leftBoundary = parseFloat(this.images.children[0].style.left) - this.newWidth;
 
+        this.swapDist = 0;
+
         for (let i = 0; i < this.images.children.length; i++) {
             this.lastPositions.push(parseFloat(this.images.children[i].style.left));            
         }
@@ -186,6 +189,7 @@ class Deck extends Component {
     }
 
     handleBoundaries = () => {
+
         if (this.lastPositions[0] <= this.leftBoundary) {
             const endOfDeck = this.lastPositions[this.numberOfCardsByIndex] + this.newWidth;
 
@@ -213,7 +217,6 @@ class Deck extends Component {
 
         const adjustedPositions = this.lastPositions.map(position => Math.abs(position - (this.newWidth / 2)));
         const closestCardByIndex = adjustedPositions.indexOf(Math.min(...adjustedPositions));
-
         this.distanceToScroll = adjustedPositions[closestCardByIndex] * 
         (this.lastPositions[closestCardByIndex] > (this.newWidth / 2) ? -1.0 : 1.0);       
 
@@ -235,26 +238,27 @@ class Deck extends Component {
 
         if (this.seed > 1) {
         
-        for (let i = 0; i < this.images.children.length; i++) {
-            this.updatedPosition = this.lastPositions[i] + this.distanceToScroll;
-            this.images.children[i].style.left = `${this.updatedPosition}px`; 
-            this.lastPositions[i] = this.updatedPosition;     
-        }
+            for (let i = 0; i < this.images.children.length; i++) {
+                this.updatedPosition = parseFloat((this.lastPositions[i] + this.distanceToScroll).toFixed(2));
+                this.images.children[i].style.left = `${this.updatedPosition}px`; 
+                this.lastPositions[i] = this.updatedPosition;    
+                console.log(`lastPos${i}`, this.lastPositions[i]);                 
+            }
 
-        this.handleBoundaries();
-        this.updateSelection();
+            this.handleBoundaries();
+            this.updateSelection();            
 
-        this.snapInProgress = false;
-        this.seed = 0.0;
+            this.snapInProgress = false;
+            this.seed = 0.0;
 
-        return;
+            return;
         }
 
         for (let i = 0; i < this.images.children.length; i++) {
         this.updatedPosition = this.lastPositions[i] + (percentageToMove * this.distanceToScroll);
-        this.images.children[i].style.left = `${this.updatedPosition}px`;      
+        this.images.children[i].style.left = `${this.updatedPosition}px`;            
         }
-
+        
         this.seed += 1 * this.snapSpeedModifier;
         requestAnimationFrame(this.animateSnap);
     }
@@ -263,40 +267,53 @@ class Deck extends Component {
 
   /* ***************************** Touch navigation ******************* */
 
-  handleTouchStart = (event) => {
-    if (this.snapInProgress) return;
+    handleTouchStart = (event) => {
+        if (this.snapInProgress) return;
 
-    this.startTouchPostition = event.changedTouches[0].screenX;
+        this.startTouchPostition = event.changedTouches[0].screenX;
 
-    for (let i = 0; i < this.images.children.length; i++) {
-      this.images.children[i].style.transitionDuration = "0.0s";
-    }
-  };
+        for (let i = 0; i < this.images.children.length; i++) {
+        this.images.children[i].style.transitionDuration = "0.0s";
+        }
+    };
+  
+    handleTouchMove = (event) => {
+        event.preventDefault();
+        if (this.snapInProgress) return;
 
-  handleTouchMove = (event) => {
-    event.preventDefault();
-    if (this.snapInProgress) return;
+        const currentTouchPosition = event.changedTouches[0].screenX;
+        let difference = currentTouchPosition - this.startTouchPostition;
+        difference *= this.speedModifier;
+        this.swapDist += difference;
 
-    const currentTouchPosition = event.changedTouches[0].screenX;
-    let difference = currentTouchPosition - this.startTouchPostition;
-    difference *= this.speedModifier;
+        this.startTouchPostition = currentTouchPosition;
 
-    this.startTouchPostition = currentTouchPosition;
+        for (let i = 0; i < this.images.children.length; i++) {
+            this.updatedPosition = this.lastPositions[i] + difference;
+            this.images.children[i].style.left = `${this.updatedPosition}px`;
+            this.lastPositions[i] = this.updatedPosition;
+            
+        }
+        if (this.swapDist < (this.newWidth * -1.0)) {
+            this.currentCard = (this.currentCard === this.numberOfCardsByIndex) ? 0 : ++this.currentCard;         
+            this.updateSelection();
+            this.swapDist = 0;
+        }
+        if (this.swapDist > this.newWidth) {
+            this.currentCard = (this.currentCard === 0) ? this.numberOfCardsByIndex : --this.currentCard; 
+            this.updateSelection();
+            this.swapDist = 0;
+        }
+        
+        this.handleBoundaries();
+    };
 
-    for (let i = 0; i < this.images.children.length; i++) {
-      this.updatedPosition = this.lastPositions[i] + difference;
-      this.images.children[i].style.left = `${this.updatedPosition}px`;
-      this.lastPositions[i] = this.updatedPosition;
-    }
-
-    this.handleBoundaries();
-  };
-
-  handleTouchEnd = () => {
-    if (this.snapInProgress) return;
-
-    this.snapBack();
-  };
+    handleTouchEnd = () => {
+        if (this.snapInProgress) return;
+        this.swapDist = 0;
+        this.snapBack();
+        this.startAutoplay();
+    };
 
   /* ****************************************************************** */
 
@@ -308,7 +325,7 @@ class Deck extends Component {
         this.scrollInProgress = true;
         
         for (let i = 0; i < this.images.children.length; i++) {
-            this.images.children[i].style.transitionDuration = "0.0s";
+            this.images.children[i].style.transitionDuration = "0.5s";
 
             const updatedPosition = this.lastPositions[i] - this.newWidth;
             
@@ -320,10 +337,10 @@ class Deck extends Component {
 
         this.handleBoundaries();
         this.updateSelection();
-
+        
         setTimeout(() => {
             this.scrollInProgress = false;
-            //this.startAutoplay();
+            this.startAutoplay();
         }, 200);
     }
 
@@ -333,7 +350,7 @@ class Deck extends Component {
         this.scrollInProgress = true;
         
         for (let i = 0; i < this.images.children.length; i++) {
-            this.images.children[i].style.transitionDuration = "0.0s";
+            this.images.children[i].style.transitionDuration = "0.5s";
 
             const updatedPosition = this.lastPositions[i] + this.newWidth;
             
@@ -345,10 +362,10 @@ class Deck extends Component {
 
         this.handleBoundaries();
         this.updateSelection();
-
+        
         setTimeout(() => {
             this.scrollInProgress = false;
-            //this.startAutoplay();
+            this.startAutoplay();
         }, 200);
     }
     
@@ -380,7 +397,7 @@ class Deck extends Component {
         this.currentCard = newCard;
 
         this.updateSelection();
-        //this.startAutoplay();
+        this.startAutoplay();
     }
         
     /* ********************************************************** */
@@ -406,8 +423,8 @@ class Deck extends Component {
         
                 this.handleBoundaries();
                 this.updateSelection();
-            }, 12100)
-        }, 1200);
+            }, 5100)
+        }, 2200);
     }
         
     /* ********************************************************** */
