@@ -3,6 +3,12 @@ import Card from "./Card.js";
 import leftArrow from '../images/left-chevron.png';
 import rightArrow from '../images/right-chevron.png';
 
+import slide1 from '../images/1.jpg';
+import slide2 from '../images/2.jpg';
+import slide3 from '../images/3.jpg';
+import slide4 from '../images/4.jpg';
+import slide5 from '../images/5.jpg';
+
 
 class Deck extends Component {
     constructor(props) {
@@ -10,11 +16,11 @@ class Deck extends Component {
 
         this.state = {
             cards: [
-                <Card picsum={"https://picsum.photos/800/350"} id="one" key="one" />,
-                <Card picsum={"https://picsum.photos/800/352"} id="two" key="two" />,
-                <Card picsum={"https://picsum.photos/800/353"} id="three" key="three" />,
-                <Card picsum={"https://picsum.photos/800/354"} id="four" key="four" />,
-                <Card picsum={"https://picsum.photos/800/355"} id="five" key="five" />
+                <Card source={slide1} id="one" key="one" />,
+                <Card source={slide2} id="two" key="two" />,
+                <Card source={slide3} id="three" key="three" />,
+                <Card source={slide4} id="four" key="four" />,
+                <Card source={slide5} id="five" key="five" />
             ]
         }
     }
@@ -22,8 +28,7 @@ class Deck extends Component {
     componentDidMount() {
         this.numberOfCardsByIndex = this.images.children.length - 1;
         this.middleCardByIndex = Math.floor(this.numberOfCardsByIndex / 2);
-        this.currentCard = this.middleCardByIndex;
-        
+        this.currentCard = this.middleCardByIndex;        
 
         /* ********************* Responsive Code ******************** */
 
@@ -212,18 +217,17 @@ class Deck extends Component {
 
     snapBack = () => {
         this.snapInProgress = true;
-
-        const adjustedPositions = this.lastPositions.map(position => Math.abs(position - (this.newWidth / 2)));
-        const closestCardByIndex = adjustedPositions.indexOf(Math.min(...adjustedPositions));
-        this.distanceToScroll = adjustedPositions[closestCardByIndex] * 
-        (this.lastPositions[closestCardByIndex] > (this.newWidth / 2) ? -1.0 : 1.0);       
-
-            if (this.distanceToScroll < 0 && closestCardByIndex !== this.middleCardByIndex) {
-                this.currentCard = (this.currentCard === this.numberOfCardsByIndex) ? 0 : ++this.currentCard; 
-            } 
-            if (this.distanceToScroll > 0 && closestCardByIndex !== this.middleCardByIndex) {
-                this.currentCard = (this.currentCard === 0) ? this.numberOfCardsByIndex : --this.currentCard;  
-            } 
+        let swapRem = this.swapDist % this.newWidth;
+                
+        this.distanceToScroll = ((this.newWidth / 2 - Math.abs(swapRem)) > 0) ?
+            -1.0 * swapRem : (this.newWidth - Math.abs(swapRem)) * (swapRem > 0 ? 1.0: -1.0);
+        
+        if (this.distanceToScroll < 0 && this.newWidth / 2 - Math.abs(swapRem) < 0) {
+            this.currentCard = (this.currentCard === this.numberOfCardsByIndex) ? 0 : ++this.currentCard; 
+        } 
+        if (this.distanceToScroll > 0 && this.newWidth / 2 - Math.abs(swapRem) < 0) {
+            this.currentCard = (this.currentCard === 0) ? this.numberOfCardsByIndex : --this.currentCard;  
+        } 
 
         this.animateSnap();
     };
@@ -266,7 +270,8 @@ class Deck extends Component {
 
     handleTouchStart = (event) => {
         if (this.snapInProgress) return;
-
+        this.swapDist = 0;
+        this.frameCounter = 0;
         this.startTouchPostition = event.changedTouches[0].screenX;
 
         for (let i = 0; i < this.images.children.length; i++) {
@@ -282,32 +287,33 @@ class Deck extends Component {
         let difference = currentTouchPosition - this.startTouchPostition;
         difference *= this.speedModifier;
         this.swapDist += difference;
+        this.frameCounter += difference;
 
         this.startTouchPostition = currentTouchPosition;
 
         for (let i = 0; i < this.images.children.length; i++) {
             this.updatedPosition = this.lastPositions[i] + difference;
             this.images.children[i].style.left = `${this.updatedPosition}px`;
-            this.lastPositions[i] = this.updatedPosition;
-            
+            this.lastPositions[i] = this.updatedPosition;            
         }
-        if (this.swapDist < (this.newWidth * -1.0)) {
+
+        if (this.frameCounter < (this.newWidth * -1.0)) {
             this.currentCard = (this.currentCard === this.numberOfCardsByIndex) ? 0 : ++this.currentCard;         
-            this.updateSelection();
-            this.swapDist = 0;
+            this.updateSelection();    
+            this.frameCounter = 0;  
         }
-        if (this.swapDist > this.newWidth) {
+
+        if (this.frameCounter > this.newWidth) {
             this.currentCard = (this.currentCard === 0) ? this.numberOfCardsByIndex : --this.currentCard; 
-            this.updateSelection();
-            this.swapDist = 0;
+            this.updateSelection();          
+            this.frameCounter = 0;             
         }
-        
+         
         this.handleBoundaries();
     };
 
     handleTouchEnd = () => {
-        if (this.snapInProgress) return;
-        this.swapDist = 0;
+        if (this.snapInProgress) return;     
         this.snapBack();
         this.startAutoplay();
     };
@@ -420,7 +426,7 @@ class Deck extends Component {
         
                 this.handleBoundaries();
                 this.updateSelection();
-            }, 5100)
+            }, 15100)
         }, 2200);
     }
         
