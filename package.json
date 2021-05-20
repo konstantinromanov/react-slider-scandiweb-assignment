@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "description": "Boilerplate for React apps",
+  "homepage": "https://konstantinromanov.github.io/responsive_react_slider_with_navigation_and_autoplay/",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --config webpack.dev.config.js",
-    "build": "webpack --config webpack.prod.config.js"
+    "build": "webpack --config webpack.prod.config.js",
+    "predeploy": "build",
+    "deploy": "gh-pages -d build"
   },
   "author": "Konstantin Romanov",
   "license": "MIT",
