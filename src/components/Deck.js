@@ -8,6 +8,7 @@ import slide2 from '../images/2.jpg';
 import slide3 from '../images/3.jpg';
 import slide4 from '../images/4.jpg';
 import slide5 from '../images/5.jpg';
+import slide6 from '../images/6.jpg';
 
 
 class Deck extends Component {
@@ -24,8 +25,9 @@ class Deck extends Component {
             ]
         }
     }
+    
+    componentDidMount() {       
 
-    componentDidMount() {
         this.numberOfCardsByIndex = this.images.children.length - 1;
         this.middleCardByIndex = Math.floor(this.numberOfCardsByIndex / 2);
         this.currentCard = this.middleCardByIndex;        
@@ -39,21 +41,16 @@ class Deck extends Component {
 
         this.newWidth = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ?
             (imgWidthAsPercentage / 100) * window.screen.width :
-            (imgWidthAsPercentage / 100) * window.innerWidth; 
+            (imgWidthAsPercentage / 100) * window.innerWidth;         
 
-        //let widthToHeightRatio = parseFloat(this.viewPort.style.width) / parseFloat(this.viewPort.style.height);
-
-        this.viewPort.style.width = `${this.newWidth}px`;
-
-        //this.viewPort.style.height = `${this.newWidth / widthToHeightRatio}px`;
+        this.viewPort.style.width = `${this.newWidth}px`;        
 
         this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
         this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.30}px`;
         this.buttonNext.style.width = `${(this.newWidth / 2) * 0.30}px`;
 
-        this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top}px`;
-                
-        this.selectionButtonsContainer.style.bottom = `${this.images.children.bottom}px`;
+        this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top}px`;               
+        
 
         for(let i = 0; i < this.images.children.length; i++) {
             this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";
@@ -75,9 +72,7 @@ class Deck extends Component {
                 (imgWidthAsPercentage / 100) * window.screen.width :
                 (imgWidthAsPercentage / 100) * window.innerWidth; 
 
-            this.viewPort.style.width = `${this.newWidth}px`;
-
-            //this.viewPort.style.height = `${this.newWidth / widthToHeightRatio}px`;
+            this.viewPort.style.width = `${this.newWidth}px`;            
 
             this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
             this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.30}px`;
@@ -135,9 +130,7 @@ class Deck extends Component {
 
         this.scrollInProgress = false;      
         
-        /* ********************************************************** */
-
-        
+        /* ********************************************************** */        
 
         /* ********************* Autoplay Code ********************** */
 
