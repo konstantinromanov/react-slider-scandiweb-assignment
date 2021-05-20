@@ -25,7 +25,12 @@ class Deck extends Component {
                 <Card source={slide2} id="two" key="two" />,
                 <Card source={slide3} id="three" key="three" />,
                 <Card source={slide4} id="four" key="four" />,
-                <Card source={slide5} id="five" key="five" />
+                <Card source={slide5} id="five" key="five" />,
+                <Card source={slide6} id="six" key="six" />,
+                <Card source={slide7} id="seven" key="seven" />,
+                <Card source={slide8} id="eight" key="eight" />,
+                <Card source={slide9} id="nine" key="nine" />,
+                <Card source={slide10} id="ten" key="ten" />
             ]
         }
     }
@@ -410,11 +415,11 @@ class Deck extends Component {
 
            this.images.children[i].style.transitionDuration = "0.0s";
            this.images.children[i].style.left = `${updatedPosition}px`;
-           this.lastPositions[i] = updatedPosition;
+           this.lastPositions[i] = updatedPosition;           
         }
-
-        for (let i = 0; i < Math.abs(this.currentCard - newCard); i++) {            
-            this.handleBoundaries();            
+        
+        for (let i = 0; i < Math.abs(this.currentCard - newCard); i++) {   
+            this.handleBoundaries();  
         }
 
         this.currentCard = newCard;
@@ -446,7 +451,7 @@ class Deck extends Component {
         
                 this.handleBoundaries();
                 this.updateSelection();
-            }, 15100)
+            }, 5100)
         }, 2200);
     }
         
@@ -471,9 +476,8 @@ class Deck extends Component {
                         this.state.cards.map((_, i) => {
                             return (<div className="selectionButton" key={i}></div>)
                         })
-                    }
-                   
-                    </div>
+                    }                   
+                </div>
             </Fragment>
         )
     }
