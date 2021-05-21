@@ -136,11 +136,11 @@ class Deck extends Component {
                 return; // Do nothing if event already handled
             }
            
-            if( event.code == 'ArrowRight' ) {   
+            if( event.code == "ArrowLeft" ) {   
                 document.getElementsByClassName("navButton")[0].click();   
                 // console.log(`KeyboardEvent: key='${event.key}' | code='${event.code}'`);        
             }
-            if( event.code == 'ArrowLeft' ) {
+            if( event.code == "ArrowRight" ) {
                 document.getElementsByClassName("navButton")[1].click(); 
             }
             // Consume the event so it doesn't get handled twice
