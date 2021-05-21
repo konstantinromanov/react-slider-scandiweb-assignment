@@ -47,17 +47,16 @@ class Deck extends Component {
         const imgQty = 2;
         let imgWidthAsPercentage = 100 / imgQty;
         imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;
-        let navButtonsPlacementAsPercentage = 55;
+        let navButtonsPlacementAsPercentage = 100 / imgQty + 3;
         navButtonsPlacementAsPercentage = window.innerWidth < 768 ? 100 : navButtonsPlacementAsPercentage;
 
         this.newWidth = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ?
             (imgWidthAsPercentage / 100) * window.screen.width :
             (imgWidthAsPercentage / 100) * window.innerWidth;
-            this.viewPort.children[0].style.width = `${this.newWidth}px`;   
-            this.viewPort.style.height = `${this.newWidth / 1.5}px`;  
-            this.viewPort.children[0].style.height = `${this.newWidth / 1.5}px`;  
+        this.viewPort.children[0].style.width = `${this.newWidth}px`;   
+        this.viewPort.style.height = `${this.newWidth / 1.5}px`; 
  
-        this.touchArea.style.height = this.viewPort.style.height;
+        // this.touchArea.style.height = this.viewPort.style.height;
 
         this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
         this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.20}px`;
@@ -89,7 +88,7 @@ class Deck extends Component {
             
             imgWidthAsPercentage = 100 / imgQty;
             imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;
-            navButtonsPlacementAsPercentage = 55;
+            navButtonsPlacementAsPercentage = 100 / imgQty + 3;
             navButtonsPlacementAsPercentage = window.innerWidth < 768 ? 100 : navButtonsPlacementAsPercentage;
 
             this.newWidth = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ?
@@ -97,11 +96,8 @@ class Deck extends Component {
                 (imgWidthAsPercentage / 100) * window.innerWidth; 
                    
             this.viewPort.children[0].style.width = `${this.newWidth}px`; 
-
-            this.viewPort.style.height = `${this.newWidth / 1.5}px`;
-            this.viewPort.children[0].style.height = `${this.newWidth / 1.5}px`;  
-
-            this.touchArea.style.height = this.viewPort.style.height;
+            this.viewPort.style.height = `${this.newWidth / 1.5}px`;   
+            // this.touchArea.style.height = this.viewPort.style.height;
 
             this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
             this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.20}px`;
@@ -135,7 +131,23 @@ class Deck extends Component {
             }
         });
         
-        
+        document.addEventListener( "keydown", function( event ) {
+            if (event.defaultPrevented) {
+                return; // Do nothing if event already handled
+            }
+           
+            if( event.code == 'ArrowRight' ) {   
+                document.getElementsByClassName("navButton")[0].click();   
+                // console.log(`KeyboardEvent: key='${event.key}' | code='${event.code}'`);        
+            }
+            if( event.code == 'ArrowLeft' ) {
+                document.getElementsByClassName("navButton")[1].click(); 
+            }
+            // Consume the event so it doesn't get handled twice
+            event.preventDefault();
+            
+        }, true);
+
         /* ********************************************************** */
 
         /* ***************************** Touch navigation ******************* */
@@ -478,9 +490,9 @@ class Deck extends Component {
                     <div ref={refId => this.images = refId} className="imagesContainer"> 
                         {this.state.cards}
                     </div>
-                    
+                    <div ref={(refId) => (this.touchArea = refId)} className="touchArea"></div>
                 </div>
-                <div ref={(refId) => (this.touchArea = refId)} className="touchArea"></div>
+               
                 <div onClick={this.handleSelection} ref={refId => this.selectionButtonsContainer = refId} className="selectionButtonsContainer">
                     {
                         this.state.cards.map((_, i) => {
