@@ -43,38 +43,41 @@ class Deck extends Component {
 
         /* ********************* Responsive Code ******************** */
 
-        let imgWidthAsPercentage = 50;
+        /* Set quantity of slides per viewport */        
+        const imgQty = 2;
+        let imgWidthAsPercentage = 100 / imgQty;
         imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;
-        let navButtonsPlacementAsPercentage = 60;
+        let navButtonsPlacementAsPercentage = 55;
         navButtonsPlacementAsPercentage = window.innerWidth < 768 ? 100 : navButtonsPlacementAsPercentage;
 
         this.newWidth = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ?
             (imgWidthAsPercentage / 100) * window.screen.width :
-            (imgWidthAsPercentage / 100) * window.innerWidth;              
-
-        this.viewPort.style.width = `${this.newWidth}px`;   
-        this.viewPort.style.height = `${this.newWidth / 1.5}px`;  
+            (imgWidthAsPercentage / 100) * window.innerWidth;
+            this.viewPort.children[0].style.width = `${this.newWidth}px`;   
+            this.viewPort.style.height = `${this.newWidth / 1.5}px`;  
+            this.viewPort.children[0].style.height = `${this.newWidth / 1.5}px`;  
+ 
         this.touchArea.style.height = this.viewPort.style.height;
 
         this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
-        this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.30}px`;
-        this.buttonNext.style.width = `${(this.newWidth / 2) * 0.30}px`;
+        this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.20}px`;
+        this.buttonNext.style.width = `${(this.newWidth / 2) * 0.20}px`;
 
         if (this.newWidth < 640) {
-            this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 10}px`;
+            this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 35}px`;
         } else {
-            this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 35}px`;    
+            this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 55}px`;    
         }  
 
         for(let i = 0; i < this.images.children.length; i++) {
             this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";
 
             if (this.newWidth < 640) {
-                this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.05}px`;
-                this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.05}px`;
+                this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.03}px`;
+                this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.01}px`;                
             } else {
-                this.selectionButtonsContainer.children[i].style.width = `${640 * 0.05}px`;
-                this.selectionButtonsContainer.children[i].style.height = `${640 * 0.05}px`;
+                this.selectionButtonsContainer.children[i].style.width = `${640 * 0.03}px`; 
+                this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.01}px`;
             }
         }
 
@@ -83,38 +86,42 @@ class Deck extends Component {
         this.updateSelection();
 
         window.addEventListener("resize", () => {
-            imgWidthAsPercentage = 50;
+            
+            imgWidthAsPercentage = 100 / imgQty;
             imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;
-            navButtonsPlacementAsPercentage = 60;
+            navButtonsPlacementAsPercentage = 55;
             navButtonsPlacementAsPercentage = window.innerWidth < 768 ? 100 : navButtonsPlacementAsPercentage;
 
             this.newWidth = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ?
                 (imgWidthAsPercentage / 100) * window.screen.width :
                 (imgWidthAsPercentage / 100) * window.innerWidth; 
+                   
+            this.viewPort.children[0].style.width = `${this.newWidth}px`; 
 
-            this.viewPort.style.width = `${this.newWidth}px`;                    
             this.viewPort.style.height = `${this.newWidth / 1.5}px`;
+            this.viewPort.children[0].style.height = `${this.newWidth / 1.5}px`;  
+
             this.touchArea.style.height = this.viewPort.style.height;
 
             this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
-            this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.30}px`;
-            this.buttonNext.style.width = `${(this.newWidth / 2) * 0.30}px`;
+            this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.20}px`;
+            this.buttonNext.style.width = `${(this.newWidth / 2) * 0.20}px`;
 
             if (this.newWidth < 640) {
-                this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 10}px`;
+                this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 35}px`;
             } else {
-                this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 35}px`;    
+                this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 55}px`;    
             }   
 
             for(let i = 0; i < this.images.children.length; i++) {
                 this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";
                 
                 if (this.newWidth < 640) {
-                    this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.05}px`;
-                    this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.05}px`;
+                    this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.03}px`;
+                    this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.01}px`;
                 } else {
-                    this.selectionButtonsContainer.children[i].style.width = `${640 * 0.05}px`;
-                    this.selectionButtonsContainer.children[i].style.height = `${640 * 0.05}px`;
+                    this.selectionButtonsContainer.children[i].style.width = `${640 * 0.03}px`;
+                    this.selectionButtonsContainer.children[i].style.height = `${640 * 0.01}px`;
                 }
             }
 
@@ -127,6 +134,7 @@ class Deck extends Component {
                 this.lastPositions[i] = parseFloat(this.images.children[i].style.left);            
             }
         });
+        
         
         /* ********************************************************** */
 
@@ -148,7 +156,7 @@ class Deck extends Component {
 
         this.touchArea.addEventListener("touchstart", this.handleTouchStart, {
             passive: false,
-          });
+        });
         this.touchArea.addEventListener("touchmove", this.handleTouchMove, {
         passive: false,
         });
@@ -193,7 +201,7 @@ class Deck extends Component {
             if (i === this.currentCard) {
                 this.selectionButtonsContainer.children[i].style.backgroundColor = "red";
             } else {
-                this.selectionButtonsContainer.children[i].style.backgroundColor = "grey";
+                this.selectionButtonsContainer.children[i].style.backgroundColor = "white";
             }            
         }        
     }
@@ -243,8 +251,10 @@ class Deck extends Component {
     snapBack = () => {
         this.snapInProgress = true;
         let swapRem = this.swapDist % this.newWidth;
-                
-        this.distanceToScroll = ((this.newWidth / 2 - Math.abs(swapRem)) > 0) ?
+
+        /* set snapBack sensivity. 2 will cause snapBack if swipe is less then half of the slide. */
+        let snapSens = 4;
+        this.distanceToScroll = ((this.newWidth / snapSens - Math.abs(swapRem)) > 0) ?
             -1.0 * swapRem : (this.newWidth - Math.abs(swapRem)) * (swapRem > 0 ? 1.0: -1.0);
         
         if (this.distanceToScroll < 0 && this.newWidth / 2 - Math.abs(swapRem) < 0) {
@@ -429,7 +439,7 @@ class Deck extends Component {
     }
         
     /* ********************************************************** */
-
+    
     /* ********************* Autoplay Code ********************** */
 
     startAutoplay = () => {
