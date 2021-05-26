@@ -24,13 +24,13 @@ class Deck extends Component {
                 <Card source={slide1} id="one" key="one" />,
                 <Card source={slide2} id="two" key="two" />,
                 <Card source={slide3} id="three" key="three" />,
-                <Card source={slide4} id="four" key="four" />,
-                <Card source={slide5} id="five" key="five" />,
-                <Card source={slide6} id="six" key="six" />,
-                <Card source={slide7} id="seven" key="seven" />,
-                <Card source={slide8} id="eight" key="eight" />,
-                <Card source={slide9} id="nine" key="nine" />,
-                <Card source={slide10} id="ten" key="ten" />
+                // <Card source={slide4} id="four" key="four" />,
+                // <Card source={slide5} id="five" key="five" />,
+                // <Card source={slide6} id="six" key="six" />,
+                // <Card source={slide7} id="seven" key="seven" />,
+                // <Card source={slide8} id="eight" key="eight" />,
+                // <Card source={slide9} id="nine" key="nine" />,
+                // <Card source={slide10} id="ten" key="ten" />
             ]
         }
     }
@@ -38,29 +38,36 @@ class Deck extends Component {
     componentDidMount() {       
 
         this.numberOfCardsByIndex = this.images.children.length - 1;
-        this.middleCardByIndex = Math.floor(this.numberOfCardsByIndex / 2);
+        this.middleCardByIndex = Math.floor((this.numberOfCardsByIndex + 2) / 2);
         this.currentCard = this.middleCardByIndex;        
 
         /* ********************* Responsive Code ******************** */
 
         /* Set quantity of slides per viewport */        
-        const imgQty = 2;
-        let imgWidthAsPercentage = 100 / imgQty;
+        const imgQty = 6
+        let imgToShow = (this.images.children.length % 2 === 0 && 
+            imgQty >= this.images.children.length) ? 
+            (this.images.children.length - 1) : (this.images.children.length);
+        imgToShow = (imgQty > imgToShow) ? imgToShow : imgQty;   
+// imgToShow = 3;
+        let imgWidthAsPercentage = 100 / imgToShow;
         imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;
-        let navButtonsPlacementAsPercentage = 100 / imgQty + 3;
+        let navButtonsPlacementAsPercentage = 100 / imgToShow + 3.5;
         navButtonsPlacementAsPercentage = window.innerWidth < 768 ? 100 : navButtonsPlacementAsPercentage;
 
         this.newWidth = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ?
             (imgWidthAsPercentage / 100) * window.screen.width :
             (imgWidthAsPercentage / 100) * window.innerWidth;
-        this.viewPort.children[0].style.width = `${this.newWidth}px`;   
+        this.images.style.width = `${this.newWidth}px`;   
+                
+        this.viewPort.style.width = `${this.newWidth * imgToShow}px`;    
         this.viewPort.style.height = `${this.newWidth / 1.5}px`; 
  
         // this.touchArea.style.height = this.viewPort.style.height;
 
         this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
-        this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.20}px`;
-        this.buttonNext.style.width = `${(this.newWidth / 2) * 0.20}px`;
+        this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
+        this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
 
         if (this.newWidth < 640) {
             this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 35}px`;
@@ -68,62 +75,58 @@ class Deck extends Component {
             this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 55}px`;    
         }  
 
-        for(let i = 0; i < this.images.children.length; i++) {
+        // cloning first and last slide for smooth transition between first and last slide
+        this.images.insertAdjacentHTML("afterbegin", this.images.children[this.numberOfCardsByIndex].outerHTML);        
+        this.images.insertAdjacentHTML("beforeend", this.images.children[1].outerHTML);   
+
+        for(let i = 0; i < this.images.children.length - 2; i++) {
             this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";
 
-            if (this.newWidth < 640) {
-                this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.03}px`;
-                this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.01}px`;                
-            } else {
-                this.selectionButtonsContainer.children[i].style.width = `${640 * 0.03}px`; 
-                this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.01}px`;
-            }
+            this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.03}px`; 
+            this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.01}px`;
         }
+                
+        this.orderCards();    
 
-        this.orderCards();
+       
 
         this.updateSelection();
 
         window.addEventListener("resize", () => {
             
-            imgWidthAsPercentage = 100 / imgQty;
+            imgWidthAsPercentage = 100 / imgToShow;
             imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;
-            navButtonsPlacementAsPercentage = 100 / imgQty + 3;
+            navButtonsPlacementAsPercentage = 100 / imgToShow + 3;
             navButtonsPlacementAsPercentage = window.innerWidth < 768 ? 100 : navButtonsPlacementAsPercentage;
 
             this.newWidth = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ?
                 (imgWidthAsPercentage / 100) * window.screen.width :
                 (imgWidthAsPercentage / 100) * window.innerWidth; 
                    
-            this.viewPort.children[0].style.width = `${this.newWidth}px`; 
+            this.images.style.width = `${this.newWidth}px`; 
+            this.viewPort.style.width = `${this.newWidth * imgToShow}px`;
             this.viewPort.style.height = `${this.newWidth / 1.5}px`;   
             // this.touchArea.style.height = this.viewPort.style.height;
-
+            
             this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
-            this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.20}px`;
-            this.buttonNext.style.width = `${(this.newWidth / 2) * 0.20}px`;
+            this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
+            this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
 
             if (this.newWidth < 640) {
                 this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 35}px`;
             } else {
                 this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 55}px`;    
-            }   
+            }  
 
-            for(let i = 0; i < this.images.children.length; i++) {
-                this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";
-                
-                if (this.newWidth < 640) {
-                    this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.03}px`;
-                    this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.01}px`;
-                } else {
-                    this.selectionButtonsContainer.children[i].style.width = `${640 * 0.03}px`;
-                    this.selectionButtonsContainer.children[i].style.height = `${640 * 0.01}px`;
-                }
+            for(let i = 0; i < this.images.children.length - 2; i++) {
+                this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";  
+                this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.03}px`; 
+                this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.01}px`;
             }
-
+            
             this.orderCards();
-
-            this.rightBoundary = parseFloat(this.images.children[this.numberOfCardsByIndex].style.left) + this.newWidth;
+            
+            this.rightBoundary = parseFloat(this.images.children[this.numberOfCardsByIndex + 2].style.left) + this.newWidth;
             this.leftBoundary = parseFloat(this.images.children[0].style.left) - this.newWidth;
 
             for (let i = 0; i < this.images.children.length; i++) {
@@ -131,11 +134,15 @@ class Deck extends Component {
             }
         });
         
+        /* ******************* Keyboard arrows keys navigation ************** */
+
         document.addEventListener( "keydown", function( event ) {
-            if (event.defaultPrevented) {
-                return; // Do nothing if event already handled
-            }
-           
+            // if (event.defaultPrevented) {
+            //     return; // Do nothing if event already handled
+            // }
+            if (this.scrollInProgress) return; 
+            this.scrollInProgress = true;
+            console.log("fired");
             if( event.code == "ArrowLeft" ) {   
                 document.getElementsByClassName("navButton")[0].click();   
                 // console.log(`KeyboardEvent: key='${event.key}' | code='${event.code}'`);        
@@ -143,8 +150,12 @@ class Deck extends Component {
             if( event.code == "ArrowRight" ) {
                 document.getElementsByClassName("navButton")[1].click(); 
             }
+
+            setTimeout(() => {
+                this.scrollInProgress = false;                
+            }, 500);
             // Consume the event so it doesn't get handled twice
-            event.preventDefault();
+            //event.preventDefault();
             
         }, true);
 
@@ -154,12 +165,12 @@ class Deck extends Component {
 
         this.startTouchPostition = 0.0;
         this.updatedPosition = 0.0;
-        this.speedModifier = 0.8;
-
+        this.speedModifier = 0.8;       
+        
         this.lastPositions = [];
-        this.rightBoundary = parseFloat(this.images.children[this.numberOfCardsByIndex].style.left) + this.newWidth;
+        this.rightBoundary = parseFloat(this.images.children[this.numberOfCardsByIndex + 2].style.left) + this.newWidth;
         this.leftBoundary = parseFloat(this.images.children[0].style.left) - this.newWidth;
-
+        
         this.swapDist = 0;
 
         for (let i = 0; i < this.images.children.length; i++) {
@@ -169,6 +180,7 @@ class Deck extends Component {
         this.touchArea.addEventListener("touchstart", this.handleTouchStart, {
             passive: false,
         });
+        
         this.touchArea.addEventListener("touchmove", this.handleTouchMove, {
         passive: false,
         });
@@ -193,7 +205,7 @@ class Deck extends Component {
 
         /* ********************* Init Code ************************** */
 
-        this.selectionButtonsContainer.children[0].click();
+        //this.selectionButtonsContainer.children[0].click();
 
         /* ********************************************************** */
         
@@ -209,11 +221,13 @@ class Deck extends Component {
     }
     
     updateSelection = () => {
-        for (let i = 0; i < this.images.children.length; i++) {
+        for (let i = 0; i < this.images.children.length - 2; i++) {
             if (i === this.currentCard) {
                 this.selectionButtonsContainer.children[i].style.backgroundColor = "red";
+                this.selectionButtonsContainer.children[i].style.opacity = 1;
             } else {
                 this.selectionButtonsContainer.children[i].style.backgroundColor = "white";
+                this.selectionButtonsContainer.children[i].style.opacity = null;
             }            
         }        
     }
@@ -221,7 +235,7 @@ class Deck extends Component {
     orderCards = () => {
         //const cardWidth = parseFloat(getComputedStyle(this.images.children[0]).width);
         let counterForRight = 1;
-        let counterForLeft = this.middleCardByIndex;
+        let counterForLeft = this.middleCardByIndex;   
 
         for (let i = 0; i < this.images.children.length; i++) {
             this.images.children[i].style.transitionDuration = "0.0s";
@@ -239,22 +253,26 @@ class Deck extends Component {
     }
 
     handleBoundaries = () => {
-
+        // console.log("leftBoundary", this.leftBoundary); 
+        // console.log("rightBoundary", this.rightBoundary); 
         if (this.lastPositions[0] <= this.leftBoundary) {
-            const endOfDeck = this.lastPositions[this.numberOfCardsByIndex] + this.newWidth;
-           
-            this.images.children[0].style.left = `${endOfDeck}px`;             
-            this.lastPositions[0] = endOfDeck;
-            this.images.appendChild(this.images.children[0], this.images.children[this.numberOfCardsByIndex]);
-            this.lastPositions.splice(this.numberOfCardsByIndex, 0, this.lastPositions.shift());
+            const endOfDeck = this.lastPositions[this.numberOfCardsByIndex + 2] + this.newWidth;  
+        // console.log("left");     
+        
+            this.images.removeChild(this.images.children[0]);
+            this.lastPositions[0] = endOfDeck;        
+            this.images.insertAdjacentHTML("beforeend", this.images.children[1].outerHTML);            
+            this.images.children[this.numberOfCardsByIndex + 2].style.left = `${endOfDeck}px`;        
+            this.lastPositions.splice(this.numberOfCardsByIndex + 2, 0, this.lastPositions.shift());        
         }
-        if (this.lastPositions[this.numberOfCardsByIndex] >= this.rightBoundary) {
-            const beginningOfDeck = this.lastPositions[0] - this.newWidth;
-            
-            this.images.children[this.numberOfCardsByIndex].style.left = `${beginningOfDeck}px`;             
-            this.lastPositions[this.numberOfCardsByIndex] = beginningOfDeck;
-            this.images.insertBefore(this.images.children[this.numberOfCardsByIndex], this.images.children[0]);
-            this.lastPositions.splice(0, 0, this.lastPositions.pop());
+        if (this.lastPositions[this.numberOfCardsByIndex + 2] >= this.rightBoundary) {
+            const beginningOfDeck = this.lastPositions[0] - this.newWidth;         
+        // console.log("right"); 
+            this.images.removeChild(this.images.children[this.numberOfCardsByIndex + 2]);
+            this.lastPositions[this.numberOfCardsByIndex + 2] = beginningOfDeck;            
+            this.images.insertAdjacentHTML("afterbegin", this.images.children[this.numberOfCardsByIndex].outerHTML);
+            this.images.children[0].style.left = `${beginningOfDeck}px`;        
+            this.lastPositions.splice(0, 0, this.lastPositions.pop());        
         }
     }
 
@@ -266,13 +284,14 @@ class Deck extends Component {
 
         /* set snapBack sensivity. 2 will cause snapBack if swipe is less then half of the slide. */
         let snapSens = 4;
-        this.distanceToScroll = ((this.newWidth / snapSens - Math.abs(swapRem)) > 0) ?
+        let snapForward = (this.newWidth / snapSens - Math.abs(swapRem)) < 0;
+        this.distanceToScroll = (!snapForward) ?
             -1.0 * swapRem : (this.newWidth - Math.abs(swapRem)) * (swapRem > 0 ? 1.0: -1.0);
         
-        if (this.distanceToScroll < 0 && this.newWidth / 2 - Math.abs(swapRem) < 0) {
+        if (this.distanceToScroll < 0 && snapForward) {
             this.currentCard = (this.currentCard === this.numberOfCardsByIndex) ? 0 : ++this.currentCard; 
         } 
-        if (this.distanceToScroll > 0 && this.newWidth / 2 - Math.abs(swapRem) < 0) {
+        if (this.distanceToScroll > 0 && snapForward) {
             this.currentCard = (this.currentCard === 0) ? this.numberOfCardsByIndex : --this.currentCard;  
         } 
 
@@ -373,16 +392,16 @@ class Deck extends Component {
         if (this.scrollInProgress) return;   
         
         this.scrollInProgress = true;
-        
+        // console.log("lastPositions", this.lastPositions);
         for (let i = 0; i < this.images.children.length; i++) {
             this.images.children[i].style.transitionDuration = "0.5s";
 
             const updatedPosition = this.lastPositions[i] - this.newWidth;
             
             this.images.children[i].style.left = `${updatedPosition}px`;            
-            this.lastPositions[i] = updatedPosition;           
+            this.lastPositions[i] = updatedPosition;                     
         }
-
+        // console.log("lastPositions", this.lastPositions);
         this.currentCard = (this.currentCard === this.numberOfCardsByIndex) ? 0 : ++this.currentCard;
 
         this.handleBoundaries();
@@ -391,14 +410,14 @@ class Deck extends Component {
         setTimeout(() => {
             this.scrollInProgress = false;
             this.startAutoplay();
-        }, 200);
+        }, 500);
     }
 
     handlePrev = () => {
         if (this.scrollInProgress) return;   
         
         this.scrollInProgress = true;
-        
+        // console.log("lastPositions", this.lastPositions);
         for (let i = 0; i < this.images.children.length; i++) {
             this.images.children[i].style.transitionDuration = "0.5s";
 
@@ -407,7 +426,7 @@ class Deck extends Component {
             this.images.children[i].style.left = `${updatedPosition}px`;            
             this.lastPositions[i] = updatedPosition;           
         }
-
+        // console.log("lastPositions", this.lastPositions);
         this.currentCard = (this.currentCard === 0) ? this.numberOfCardsByIndex : --this.currentCard;
 
         this.handleBoundaries();
@@ -416,7 +435,7 @@ class Deck extends Component {
         setTimeout(() => {
             this.scrollInProgress = false;
             this.startAutoplay();
-        }, 200);
+        }, 500);
     }
     
     /* ********************************************************** */
@@ -461,7 +480,7 @@ class Deck extends Component {
         this.autoplayTimeoutId = setTimeout(() => {
             this.autoplayIntervalId = setInterval(() => {
                 for (let i = 0; i < this.images.children.length; i++) {
-                    this.images.children[i].style.transitionDuration = "0.5s";
+                    this.images.children[i].style.transitionDuration = "0.7s";
         
                     const updatedPosition = this.lastPositions[i] - this.newWidth;
                     
@@ -473,8 +492,8 @@ class Deck extends Component {
         
                 this.handleBoundaries();
                 this.updateSelection();
-            }, 5100)
-        }, 2200);
+            }, 27100)
+        }, 3500);
     }
         
     /* ********************************************************** */
