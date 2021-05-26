@@ -24,13 +24,13 @@ class Deck extends Component {
                 <Card source={slide1} id="one" key="one" />,
                 <Card source={slide2} id="two" key="two" />,
                 <Card source={slide3} id="three" key="three" />,
-                // <Card source={slide4} id="four" key="four" />,
-                // <Card source={slide5} id="five" key="five" />,
-                // <Card source={slide6} id="six" key="six" />,
-                // <Card source={slide7} id="seven" key="seven" />,
-                // <Card source={slide8} id="eight" key="eight" />,
-                // <Card source={slide9} id="nine" key="nine" />,
-                // <Card source={slide10} id="ten" key="ten" />
+                <Card source={slide4} id="four" key="four" />,
+                <Card source={slide5} id="five" key="five" />,
+                <Card source={slide6} id="six" key="six" />,
+                <Card source={slide7} id="seven" key="seven" />,
+                <Card source={slide8} id="eight" key="eight" />,
+                <Card source={slide9} id="nine" key="nine" />,
+                <Card source={slide10} id="ten" key="ten" />
             ]
         }
     }
@@ -39,12 +39,12 @@ class Deck extends Component {
 
         this.numberOfCardsByIndex = this.images.children.length - 1;
         this.middleCardByIndex = Math.floor((this.numberOfCardsByIndex + 2) / 2);
-        this.currentCard = this.middleCardByIndex;        
+        this.currentCard = this.middleCardByIndex - 1;        
 
         /* ********************* Responsive Code ******************** */
 
         /* Set quantity of slides per viewport */        
-        const imgQty = 6
+        const imgQty = 2
         let imgToShow = (this.images.children.length % 2 === 0 && 
             imgQty >= this.images.children.length) ? 
             (this.images.children.length - 1) : (this.images.children.length);
@@ -52,15 +52,18 @@ class Deck extends Component {
 // imgToShow = 3;
         let imgWidthAsPercentage = 100 / imgToShow;
         imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;
+        
         let navButtonsPlacementAsPercentage = 100 / imgToShow + 3.5;
         navButtonsPlacementAsPercentage = window.innerWidth < 768 ? 100 : navButtonsPlacementAsPercentage;
 
         this.newWidth = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ?
             (imgWidthAsPercentage / 100) * window.screen.width :
             (imgWidthAsPercentage / 100) * window.innerWidth;
-        this.images.style.width = `${this.newWidth}px`;   
-                
-        this.viewPort.style.width = `${this.newWidth * imgToShow}px`;    
+        this.images.style.width = `${this.newWidth}px`;       
+        
+        this.viewPort.style.width = imgWidthAsPercentage === 100 ?
+            `${this.newWidth}px` : `${this.newWidth * imgToShow}px`;     
+
         this.viewPort.style.height = `${this.newWidth / 1.5}px`; 
  
         // this.touchArea.style.height = this.viewPort.style.height;
@@ -81,9 +84,9 @@ class Deck extends Component {
 
         for(let i = 0; i < this.images.children.length - 2; i++) {
             this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";
-
+    //console.log("len4", i, this.selectionButtonsContainer.children[i]);
             this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.03}px`; 
-            this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.01}px`;
+            this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.007}px`;
         }
                 
         this.orderCards();    
@@ -104,7 +107,10 @@ class Deck extends Component {
                 (imgWidthAsPercentage / 100) * window.innerWidth; 
                    
             this.images.style.width = `${this.newWidth}px`; 
-            this.viewPort.style.width = `${this.newWidth * imgToShow}px`;
+
+            this.viewPort.style.width = imgWidthAsPercentage === 100 ?
+                `${this.newWidth}px` : `${this.newWidth * imgToShow}px`; 
+
             this.viewPort.style.height = `${this.newWidth / 1.5}px`;   
             // this.touchArea.style.height = this.viewPort.style.height;
             
@@ -121,7 +127,7 @@ class Deck extends Component {
             for(let i = 0; i < this.images.children.length - 2; i++) {
                 this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";  
                 this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.03}px`; 
-                this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.01}px`;
+                this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.007}px`;
             }
             
             this.orderCards();
@@ -142,7 +148,7 @@ class Deck extends Component {
             // }
             if (this.scrollInProgress) return; 
             this.scrollInProgress = true;
-            console.log("fired");
+            
             if( event.code == "ArrowLeft" ) {   
                 document.getElementsByClassName("navButton")[0].click();   
                 // console.log(`KeyboardEvent: key='${event.key}' | code='${event.code}'`);        
@@ -205,7 +211,7 @@ class Deck extends Component {
 
         /* ********************* Init Code ************************** */
 
-        //this.selectionButtonsContainer.children[0].click();
+        this.selectionButtonsContainer.children[0].click();
 
         /* ********************************************************** */
         
@@ -239,7 +245,6 @@ class Deck extends Component {
 
         for (let i = 0; i < this.images.children.length; i++) {
             this.images.children[i].style.transitionDuration = "0.0s";
-            
             if (i < this.middleCardByIndex) {
                 this.images.children[i].style.left = `${-1 * ((counterForLeft * this.newWidth) - (this.newWidth / 2))}px`;
                 counterForLeft--;
@@ -447,8 +452,10 @@ class Deck extends Component {
 
         let newCard = null;
 
-        for (let i = 0; i < this.images.children.length; i++) {
-            if (event.target === this.selectionButtonsContainer.children[i]) newCard = i;            
+        for (let i = 0; i < this.images.children.length - 2; i++) {
+            if (event.target === this.selectionButtonsContainer.children[i]) {
+                newCard = i; 
+            }         
         }
 
         for (let i = 0; i < this.images.children.length; i++) {
@@ -464,7 +471,6 @@ class Deck extends Component {
         }
 
         this.currentCard = newCard;
-
         this.updateSelection();
         this.startAutoplay();
     }
@@ -492,7 +498,7 @@ class Deck extends Component {
         
                 this.handleBoundaries();
                 this.updateSelection();
-            }, 27100)
+            }, 7100)
         }, 3500);
     }
         
