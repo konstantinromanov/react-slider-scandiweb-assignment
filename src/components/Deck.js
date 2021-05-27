@@ -49,7 +49,7 @@ class Deck extends Component {
             imgQty >= this.images.children.length) ? 
             (this.images.children.length - 1) : (this.images.children.length);
         imgToShow = (imgQty > imgToShow) ? imgToShow : imgQty;   
-// imgToShow = 3;
+
         let imgWidthAsPercentage = 100 / imgToShow;
         imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;
         
@@ -83,17 +83,17 @@ class Deck extends Component {
         this.images.insertAdjacentHTML("beforeend", this.images.children[1].outerHTML);   
 
         for(let i = 0; i < this.images.children.length - 2; i++) {
-            this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";
-    //console.log("len4", i, this.selectionButtonsContainer.children[i]);
+            this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";    
             this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.03}px`; 
             this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.007}px`;
         }
                 
         this.orderCards();    
+      
+        this.rightBoundary = parseFloat(this.images.children[this.numberOfCardsByIndex + 2].style.left) + this.newWidth;
+        this.leftBoundary = parseFloat(this.images.children[0].style.left) - this.newWidth;
 
-       
-
-        this.updateSelection();
+        this.lastPositions = [];
 
         window.addEventListener("resize", () => {
             
@@ -140,32 +140,68 @@ class Deck extends Component {
             }
         });
         
+        
+        
+
         /* ******************* Keyboard arrows keys navigation ************** */
 
         document.addEventListener( "keydown", function( event ) {
-            // if (event.defaultPrevented) {
-            //     return; // Do nothing if event already handled
-            // }
+            
             if (this.scrollInProgress) return; 
             this.scrollInProgress = true;
             
             if( event.code == "ArrowLeft" ) {   
-                document.getElementsByClassName("navButton")[0].click();   
-                // console.log(`KeyboardEvent: key='${event.key}' | code='${event.code}'`);        
+                document.getElementsByClassName("navButton")[0].click();       
             }
             if( event.code == "ArrowRight" ) {
-                document.getElementsByClassName("navButton")[1].click(); 
+                document.getElementsByClassName("navButton")[1].click();                 
             }
 
             setTimeout(() => {
                 this.scrollInProgress = false;                
             }, 500);
-            // Consume the event so it doesn't get handled twice
-            //event.preventDefault();
             
         }, true);
 
         /* ********************************************************** */
+
+        /* ******** Pause slider when browser tab is switched to another ********* */
+
+        // Set the name of the hidden property and the change event for visibility
+        var hidden, visibilityChange;
+        if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+            hidden = "hidden";
+            visibilityChange = "visibilitychange";
+        } else if (typeof document.msHidden !== "undefined") {
+            hidden = "msHidden";
+            visibilityChange = "msvisibilitychange";
+        } else if (typeof document.webkitHidden !== "undefined") {
+            hidden = "webkitHidden";
+            visibilityChange = "webkitvisibilitychange";
+        }
+        
+        // If the page is hidden, pause the slider;
+        // if the page is shown, play the slider.
+        var handleVisibilityChange = () => {
+            if (document[hidden]) {                
+                this.stopAutoplay();                    
+            } else {
+                this.startAutoplay();
+            }
+        }
+
+        // Warn if the browser doesn't support addEventListener or the Page Visibility API
+        if (typeof document.addEventListener === "undefined" || hidden === undefined) {
+            console.log("This demo requires a browser, such as Google Chrome or Firefox, that supports the Page Visibility API.");
+        } else {
+            // Handle page visibility change
+            document.addEventListener(visibilityChange, handleVisibilityChange, false);        
+        }
+
+        /* ********************************************************** */
+
+        this.updateSelection();
+        
 
         /* ***************************** Touch navigation ******************* */
 
@@ -173,9 +209,7 @@ class Deck extends Component {
         this.updatedPosition = 0.0;
         this.speedModifier = 0.8;       
         
-        this.lastPositions = [];
-        this.rightBoundary = parseFloat(this.images.children[this.numberOfCardsByIndex + 2].style.left) + this.newWidth;
-        this.leftBoundary = parseFloat(this.images.children[0].style.left) - this.newWidth;
+       
         
         this.swapDist = 0;
 
@@ -389,8 +423,9 @@ class Deck extends Component {
         this.startAutoplay();
     };
 
-  /* ****************************************************************** */
-
+    /* ****************************************************************** */
+    
+    
     /* ********************* Button Navigation ****************** */   
 
     handleNext = () => {
@@ -412,9 +447,10 @@ class Deck extends Component {
         this.handleBoundaries();
         this.updateSelection();
         
+        
         setTimeout(() => {
             this.scrollInProgress = false;
-            this.startAutoplay();
+            this.startAutoplay();            
         }, 500);
     }
 
@@ -444,7 +480,7 @@ class Deck extends Component {
     }
     
     /* ********************************************************** */
-
+    
     /* ********************* Selection Navigation *************** */
 
     handleSelection = event => {
@@ -477,6 +513,8 @@ class Deck extends Component {
         
     /* ********************************************************** */
     
+    
+    
     /* ********************* Autoplay Code ********************** */
 
     startAutoplay = () => {
@@ -486,7 +524,7 @@ class Deck extends Component {
         this.autoplayTimeoutId = setTimeout(() => {
             this.autoplayIntervalId = setInterval(() => {
                 for (let i = 0; i < this.images.children.length; i++) {
-                    this.images.children[i].style.transitionDuration = "0.7s";
+                    this.images.children[i].style.transitionDuration = "0.9s";
         
                     const updatedPosition = this.lastPositions[i] - this.newWidth;
                     
@@ -498,10 +536,18 @@ class Deck extends Component {
         
                 this.handleBoundaries();
                 this.updateSelection();
-            }, 7100)
+            }, 5100)
         }, 3500);
     }
         
+    /* ********************* Stop autoplay ********************** */
+
+    stopAutoplay = () => {
+        clearTimeout(this.autoplayTimeoutId);
+        clearInterval(this.autoplayIntervalId);
+    }
+
+
     /* ********************************************************** */
 
     render() {
