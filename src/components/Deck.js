@@ -2,37 +2,13 @@ import React, { Component, Fragment } from "react";
 import Card from "./Card.js";
 import leftArrow from '../images/left-chevron.png';
 import rightArrow from '../images/right-chevron.png';
-
-import slide1 from '../images/1.jpg';
-import slide2 from '../images/2.jpg';
-import slide3 from '../images/3.jpg';
-import slide4 from '../images/4.jpg';
-import slide5 from '../images/5.jpg';
-import slide6 from '../images/6.jpg';
-import slide7 from '../images/7.jpg';
-import slide8 from '../images/8.jpg';
-import slide9 from '../images/9.jpg';
-import slide10 from '../images/10.jpg';
+import AppData from '../AppData';
 
 
 class Deck extends Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            cards: [
-                <Card source={slide1} id="one" key="one" />,
-                <Card source={slide2} id="two" key="two" />,
-                <Card source={slide3} id="three" key="three" />,
-                <Card source={slide4} id="four" key="four" />,
-                <Card source={slide5} id="five" key="five" />,
-                <Card source={slide6} id="six" key="six" />,
-                <Card source={slide7} id="seven" key="seven" />,
-                <Card source={slide8} id="eight" key="eight" />,
-                <Card source={slide9} id="nine" key="nine" />,
-                <Card source={slide10} id="ten" key="ten" />
-            ]
-        }
+        this.state = AppData;       
     }
     
     componentDidMount() {       
@@ -43,7 +19,7 @@ class Deck extends Component {
 
         /* ********************* Responsive Code ******************** */
 
-        /* Set quantity of slides per viewport */        
+        // Set prefered quantity of slides per viewport (will be adjusted to maintain best result)        
         const imgQty = 2
         let imgToShow = (this.images.children.length % 2 === 0 && 
             imgQty >= this.images.children.length) ? 
@@ -154,7 +130,7 @@ class Deck extends Component {
                 document.getElementsByClassName("navButton")[0].click();       
             }
             if( event.code == "ArrowRight" ) {
-                document.getElementsByClassName("navButton")[1].click();                 
+                document.getElementsByClassName("navButton")[1].click(); 
             }
 
             setTimeout(() => {
@@ -375,6 +351,8 @@ class Deck extends Component {
 
     handleTouchStart = (event) => {
         if (this.snapInProgress) return;
+        this.stopAutoplay();
+
         this.swapDist = 0;
         this.frameCounter = 0;
         this.startTouchPostition = event.changedTouches[0].screenX;
@@ -429,7 +407,8 @@ class Deck extends Component {
     /* ********************* Button Navigation ****************** */   
 
     handleNext = () => {
-        if (this.scrollInProgress) return;   
+        if (this.scrollInProgress) return;
+        this.stopAutoplay();   
         
         this.scrollInProgress = true;
         // console.log("lastPositions", this.lastPositions);
@@ -456,7 +435,8 @@ class Deck extends Component {
 
     handlePrev = () => {
         if (this.scrollInProgress) return;   
-        
+        this.stopAutoplay();
+
         this.scrollInProgress = true;
         // console.log("lastPositions", this.lastPositions);
         for (let i = 0; i < this.images.children.length; i++) {
@@ -485,7 +465,8 @@ class Deck extends Component {
 
     handleSelection = event => {
         if (event.target === this.selectionButtonsContainer) return;
-
+        this.stopAutoplay();
+        
         let newCard = null;
 
         for (let i = 0; i < this.images.children.length - 2; i++) {
@@ -498,6 +479,7 @@ class Deck extends Component {
            const updatedPosition = this.lastPositions[i] + ((this.currentCard - newCard) * this.newWidth);
 
            this.images.children[i].style.transitionDuration = "0.0s";
+           console.log(this.images.children[i].style);
            this.images.children[i].style.left = `${updatedPosition}px`;
            this.lastPositions[i] = updatedPosition;           
         }
@@ -547,7 +529,6 @@ class Deck extends Component {
         clearInterval(this.autoplayIntervalId);
     }
 
-
     /* ********************************************************** */
 
     render() {
@@ -559,7 +540,13 @@ class Deck extends Component {
                 </div>
                 <div ref={refId => this.viewPort = refId} className="viewPort">
                     <div ref={refId => this.images = refId} className="imagesContainer"> 
-                        {this.state.cards}
+                        {this.state.cards.map((item, index) => {
+                                return (
+                                    <Card source={`${item.src}`} id={index} key={index} />                                    
+                                )
+                            }, this)
+                        } 
+
                     </div>
                     <div ref={(refId) => (this.touchArea = refId)} className="touchArea"></div>
                 </div>

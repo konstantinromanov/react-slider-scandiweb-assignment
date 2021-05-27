@@ -17,7 +17,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   overflow: hidden;
-  background-color: rgba(57, 57, 151, 0.4);
+  /* background-color: rgba(57, 57, 151, 0.4); */
 }
 
 .imagesContainer {
