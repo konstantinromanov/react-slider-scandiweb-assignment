@@ -116,7 +116,31 @@ class Deck extends Component {
             }
         });
         
+        /* ********** Hide mouse cursor above viewport when not moving ************* */
+
+        let justHidden = false;
+        let j;
         
+        let hide = () => {           
+            this.viewPort.style.cursor = "none";
+            // console.log('hide');
+            justHidden = true;
+            setTimeout(() => {
+                justHidden = false;
+            }, 500);
+        }
+
+        this.viewPort.addEventListener("mousemove", e => {
+            if (!justHidden) {
+                justHidden = false;
+                // console.log('move');
+                clearTimeout(j);
+                this.viewPort.style.cursor = "default";
+                j = setTimeout(hide, 1000);
+            }
+        })        
+
+        /* ****************************************************************** */
         
 
         /* ******************* Keyboard arrows keys navigation ************** */
@@ -184,9 +208,7 @@ class Deck extends Component {
         this.startTouchPostition = 0.0;
         this.updatedPosition = 0.0;
         this.speedModifier = 0.8;       
-        
-       
-        
+                
         this.swapDist = 0;
 
         for (let i = 0; i < this.images.children.length; i++) {
@@ -268,11 +290,9 @@ class Deck extends Component {
     }
 
     handleBoundaries = () => {
-        // console.log("leftBoundary", this.leftBoundary); 
-        // console.log("rightBoundary", this.rightBoundary); 
+         
         if (this.lastPositions[0] <= this.leftBoundary) {
-            const endOfDeck = this.lastPositions[this.numberOfCardsByIndex + 2] + this.newWidth;  
-        // console.log("left");     
+            const endOfDeck = this.lastPositions[this.numberOfCardsByIndex + 2] + this.newWidth;              
         
             this.images.removeChild(this.images.children[0]);
             this.lastPositions[0] = endOfDeck;        
@@ -282,7 +302,7 @@ class Deck extends Component {
         }
         if (this.lastPositions[this.numberOfCardsByIndex + 2] >= this.rightBoundary) {
             const beginningOfDeck = this.lastPositions[0] - this.newWidth;         
-        // console.log("right"); 
+       
             this.images.removeChild(this.images.children[this.numberOfCardsByIndex + 2]);
             this.lastPositions[this.numberOfCardsByIndex + 2] = beginningOfDeck;            
             this.images.insertAdjacentHTML("afterbegin", this.images.children[this.numberOfCardsByIndex].outerHTML);
@@ -411,7 +431,7 @@ class Deck extends Component {
         this.stopAutoplay();   
         
         this.scrollInProgress = true;
-        // console.log("lastPositions", this.lastPositions);
+        
         for (let i = 0; i < this.images.children.length; i++) {
             this.images.children[i].style.transitionDuration = "0.5s";
 
@@ -420,13 +440,12 @@ class Deck extends Component {
             this.images.children[i].style.left = `${updatedPosition}px`;            
             this.lastPositions[i] = updatedPosition;                     
         }
-        // console.log("lastPositions", this.lastPositions);
+        
         this.currentCard = (this.currentCard === this.numberOfCardsByIndex) ? 0 : ++this.currentCard;
 
         this.handleBoundaries();
         this.updateSelection();
-        
-        
+                
         setTimeout(() => {
             this.scrollInProgress = false;
             this.startAutoplay();            
@@ -438,7 +457,7 @@ class Deck extends Component {
         this.stopAutoplay();
 
         this.scrollInProgress = true;
-        // console.log("lastPositions", this.lastPositions);
+       
         for (let i = 0; i < this.images.children.length; i++) {
             this.images.children[i].style.transitionDuration = "0.5s";
 
@@ -447,7 +466,7 @@ class Deck extends Component {
             this.images.children[i].style.left = `${updatedPosition}px`;            
             this.lastPositions[i] = updatedPosition;           
         }
-        // console.log("lastPositions", this.lastPositions);
+       
         this.currentCard = (this.currentCard === 0) ? this.numberOfCardsByIndex : --this.currentCard;
 
         this.handleBoundaries();
@@ -478,8 +497,7 @@ class Deck extends Component {
         for (let i = 0; i < this.images.children.length; i++) {
            const updatedPosition = this.lastPositions[i] + ((this.currentCard - newCard) * this.newWidth);
 
-           this.images.children[i].style.transitionDuration = "0.0s";
-           console.log(this.images.children[i].style);
+           this.images.children[i].style.transitionDuration = "0.0s";          
            this.images.children[i].style.left = `${updatedPosition}px`;
            this.lastPositions[i] = updatedPosition;           
         }

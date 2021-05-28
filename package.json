@@ -1,7 +1,7 @@
 {
   "name": "react-webpack_slider",
   "version": "1.0.1",
-  "private": false,
+  "private": true,
   "description": "Responsive react slider with navigation and autoplay",
   "homepage": "https://konstantinromanov.github.io/responsive_react_slider_with_navigation_and_autoplay/",
   "main": "index.js",
