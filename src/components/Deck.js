@@ -48,11 +48,11 @@ class Deck extends Component {
         this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
         this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
 
-        if (this.newWidth < 640) {
-            this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 35}px`;
-        } else {
-            this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 55}px`;    
-        }  
+        // if (this.newWidth < 640) {
+        //     this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 35}px`;
+        // } else {
+        //     this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 55}px`;    
+        // }  
 
         // cloning first and last slide for smooth transition between first and last slide
         this.images.insertAdjacentHTML("afterbegin", this.images.children[this.numberOfCardsByIndex].outerHTML);        
@@ -94,11 +94,11 @@ class Deck extends Component {
             this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
             this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
 
-            if (this.newWidth < 640) {
-                this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 35}px`;
-            } else {
-                this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 55}px`;    
-            }  
+            // if (this.newWidth < 640) {
+            //     this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 35}px`;
+            // } else {
+            //     this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 55}px`;    
+            // }  
 
             for(let i = 0; i < this.images.children.length - 2; i++) {
                 this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";  
@@ -117,28 +117,32 @@ class Deck extends Component {
         });
         
         /* ********** Hide mouse cursor above viewport when not moving ************* */
+                
+        let mobDevice = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        let justHidden = false;
-        let j;
-        
-        let hide = () => {           
-            this.viewPort.style.cursor = "none";
-            // console.log('hide');
-            justHidden = true;
-            setTimeout(() => {
-                justHidden = false;
-            }, 500);
-        }
+        if (!mobDevice) {
+            let justHidden = false;
+            let j;
 
-        this.viewPort.addEventListener("mousemove", e => {
-            if (!justHidden) {
-                justHidden = false;
-                // console.log('move');
-                clearTimeout(j);
-                this.viewPort.style.cursor = "default";
-                j = setTimeout(hide, 1000);
+            let hide = () => {  
+                this.viewPort.style.cursor = "none";
+                // console.log('hide');
+                justHidden = true;
+                setTimeout(() => {
+                    justHidden = false;
+                }, 500);    
             }
-        })        
+
+            this.viewPort.addEventListener("mousemove", e => {                
+                if (!justHidden) {
+                    justHidden = false;
+                    // console.log('move');
+                    clearTimeout(j);
+                    this.viewPort.style.cursor = "default";
+                    j = setTimeout(hide, 1000);
+                }                
+            })    
+        }    
 
         /* ****************************************************************** */
         
@@ -220,10 +224,10 @@ class Deck extends Component {
         });
         
         this.touchArea.addEventListener("touchmove", this.handleTouchMove, {
-        passive: false,
+            passive: false,
         });
         this.touchArea.addEventListener("touchend", this.handleTouchEnd, {
-        passive: false,
+            passive: false,
         });
 
         /* ****************************************************************** */
@@ -315,7 +319,7 @@ class Deck extends Component {
 
     snapBack = () => {
         this.snapInProgress = true;
-        let swapRem = this.swapDist % this.newWidth;
+        let swapRem = this.swapDist % this.newWidth;       
 
         /* set snapBack sensivity. 2 will cause snapBack if swipe is less then half of the slide. */
         let snapSens = 4;
@@ -334,7 +338,7 @@ class Deck extends Component {
     };
 
     animateSnap = () => {
-        this.seed = parseFloat(this.seed.toFixed(2));
+        this.seed = parseFloat(this.seed.toFixed(2));        
 
         let percentageToMove = Math.pow(this.seed, 2.0);
         percentageToMove = parseFloat(percentageToMove.toFixed(2));
@@ -350,9 +354,12 @@ class Deck extends Component {
             this.handleBoundaries();
             this.updateSelection();            
 
-            this.snapInProgress = false;
+             this.snapInProgress = false;
             this.seed = 0.0;
-
+            this.swapDist = 0;
+            setTimeout(() => {
+                
+            }, 200);
             return;
         }
 
@@ -369,10 +376,10 @@ class Deck extends Component {
 
   /* ***************************** Touch navigation ******************* */
 
-    handleTouchStart = (event) => {
-        if (this.snapInProgress) return;
+    handleTouchStart = (event) => {          
+        if(event.touches.length > 1) return;             
+    
         this.stopAutoplay();
-
         this.swapDist = 0;
         this.frameCounter = 0;
         this.startTouchPostition = event.changedTouches[0].screenX;
@@ -384,8 +391,8 @@ class Deck extends Component {
   
     handleTouchMove = (event) => {
         event.preventDefault();
-        if (this.snapInProgress) return;
-
+        if (this.snapInProgress) return; 
+       
         const currentTouchPosition = event.changedTouches[0].screenX;
         let difference = currentTouchPosition - this.startTouchPostition;
         difference *= this.speedModifier;
@@ -411,14 +418,16 @@ class Deck extends Component {
             this.updateSelection();          
             this.frameCounter = 0;             
         }
-         
+        
         this.handleBoundaries();
+        
     };
 
-    handleTouchEnd = () => {
-        if (this.snapInProgress) return;     
+    handleTouchEnd = (event) => {
+        if (this.snapInProgress) return; 
+                       
         this.snapBack();
-        this.startAutoplay();
+        this.startAutoplay();  
     };
 
     /* ****************************************************************** */
@@ -566,16 +575,17 @@ class Deck extends Component {
                         } 
 
                     </div>
+                    <div onClick={this.handleSelection} ref={refId => this.selectionButtonsContainer = refId} className="selectionButtonsContainer">
+                        {
+                            this.state.cards.map((_, i) => {
+                                return (<div className="selectionButton" key={i}></div>)
+                            })
+                        }                   
+                    </div>
                     <div ref={(refId) => (this.touchArea = refId)} className="touchArea"></div>
                 </div>
                
-                <div onClick={this.handleSelection} ref={refId => this.selectionButtonsContainer = refId} className="selectionButtonsContainer">
-                    {
-                        this.state.cards.map((_, i) => {
-                            return (<div className="selectionButton" key={i}></div>)
-                        })
-                    }                   
-                </div>
+                
             </Fragment>
         )
     }

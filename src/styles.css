@@ -80,6 +80,7 @@ body {
   width: fit-content;
   height: fit-content;
   position: absolute;
+  bottom: 7%;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -87,7 +88,7 @@ body {
   justify-content: center;
   align-content: center;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 99999;
 }
 
 .selectionButton {
