@@ -29,6 +29,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  /* background-color: rgba(151, 57, 151, 0.4); */
 }
 
 .touchArea {
@@ -127,5 +128,5 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  
+  /* background-color: rgba(57, 148, 151, 0.4); */
 }

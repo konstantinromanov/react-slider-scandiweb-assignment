@@ -48,11 +48,6 @@ class Deck extends Component {
         this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
         this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
 
-        // if (this.newWidth < 640) {
-        //     this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 35}px`;
-        // } else {
-        //     this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 55}px`;    
-        // }  
 
         // cloning first and last slide for smooth transition between first and last slide
         this.images.insertAdjacentHTML("afterbegin", this.images.children[this.numberOfCardsByIndex].outerHTML);        
@@ -94,12 +89,7 @@ class Deck extends Component {
             this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
             this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
 
-            // if (this.newWidth < 640) {
-            //     this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 35}px`;
-            // } else {
-            //     this.selectionButtonsContainer.style.bottom = `${this.viewPort.getBoundingClientRect().top + 55}px`;    
-            // }  
-
+           
             for(let i = 0; i < this.images.children.length - 2; i++) {
                 this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";  
                 this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.03}px`; 
@@ -206,6 +196,23 @@ class Deck extends Component {
 
         this.updateSelection();
         
+        /* ***************************** Wheel navigation ******************* */
+
+        this.mouseOver = false;
+        this.wheelTimeoutId = null;
+
+
+        this.touchArea.addEventListener("mouseover", this.handleMouseOver, {
+            passive: false,
+        });
+        this.touchArea.addEventListener("mouseleave", this.handleMouseLeave, {
+            passive: false,
+        });
+        this.touchArea.addEventListener("wheel", this.handleWheel, {
+            passive: false,
+        });
+
+        /* ****************************************************************** */
 
         /* ***************************** Touch navigation ******************* */
 
@@ -214,6 +221,7 @@ class Deck extends Component {
         this.speedModifier = 0.8;       
                 
         this.swapDist = 0;
+        this.frameCounter = 0;
 
         for (let i = 0; i < this.images.children.length; i++) {
             this.lastPositions.push(parseFloat(this.images.children[i].style.left));            
@@ -270,8 +278,8 @@ class Deck extends Component {
             } else {
                 this.selectionButtonsContainer.children[i].style.backgroundColor = "white";
                 this.selectionButtonsContainer.children[i].style.opacity = null;
-            }            
-        }        
+            }                       
+        }                
     }
 
     orderCards = () => {
@@ -315,6 +323,67 @@ class Deck extends Component {
         }
     }
 
+    /* ***************************** Wheel navigation ******************* */
+
+    handleMouseOver = () => {
+        if (this.snapInProgress) return;
+        this.mouseOver = true;
+
+        for (let i = 0; i < this.images.children.length; i++) {
+            this.images.children[i].style.transitionDuration = "0.7s";        
+        }
+    };
+    
+    handleMouseLeave = () => {
+        if (this.snapInProgress) return;
+        this.mouseOver = false;
+    };
+    
+    handleWheel = (event) => {
+        event.preventDefault();
+        clearTimeout(this.wheelTimeoutId);
+        if (this.snapInProgress) return;        
+        this.stopAutoplay();
+
+        let difference = event.deltaY * 1.7;
+        this.swapDist += difference;
+        this.frameCounter += difference;
+        
+        if (this.mouseOver) {
+            
+            for (let i = 0; i < this.images.children.length; i++) {
+                this.updatedPosition = this.lastPositions[i] + difference;
+                this.images.children[i].style.left = `${this.updatedPosition}px`;
+                this.lastPositions[i] = this.updatedPosition;
+            }
+        
+            while (Math.abs(this.frameCounter) > this.newWidth) {
+                if (this.swapDist < (this.newWidth * -1.0)) {  
+                    this.currentCard = (this.currentCard === this.numberOfCardsByIndex) ? 0 : ++this.currentCard;         
+                    this.updateSelection(); 
+                    this.frameCounter -= (this.newWidth * -1.0);         
+                }
+        
+                if (this.swapDist > this.newWidth) {
+                    this.currentCard = (this.currentCard === 0) ? this.numberOfCardsByIndex : --this.currentCard; 
+                    this.updateSelection(); 
+                    this.frameCounter -= this.newWidth;
+                }
+            }
+                        
+            this.handleBoundaries();            
+            
+            this.wheelTimeoutId = setTimeout(() => {
+                this.frameCounter = 0;               
+                this.snapBack();
+                this.startAutoplay();
+            }, 70);
+        }        
+    };
+    
+    /* ****************************************************************** */
+
+
     /* ***************************** Snap Back Logic ******************* */
 
     snapBack = () => {
@@ -354,7 +423,7 @@ class Deck extends Component {
             this.handleBoundaries();
             this.updateSelection();            
 
-             this.snapInProgress = false;
+            this.snapInProgress = false;
             this.seed = 0.0;
             this.swapDist = 0;
             setTimeout(() => {
@@ -533,7 +602,7 @@ class Deck extends Component {
         this.autoplayTimeoutId = setTimeout(() => {
             this.autoplayIntervalId = setInterval(() => {
                 for (let i = 0; i < this.images.children.length; i++) {
-                    this.images.children[i].style.transitionDuration = "0.9s";
+                    this.images.children[i].style.transitionDuration = "1.2s";
         
                     const updatedPosition = this.lastPositions[i] - this.newWidth;
                     
