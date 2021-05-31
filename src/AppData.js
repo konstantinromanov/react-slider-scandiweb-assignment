@@ -14,52 +14,52 @@ var AppData = {
     {
       src: slide1,
       title: "Photo 1",
-      caption: "",
+      caption: "© Konstantin Romanov",
     },
     {
       src: slide2,
       title: "Photo 2",
-      caption: "",
+      caption: "© Konstantin Romanov",
     },
     {
       src: slide3,
       title: "Photo 3",
-      caption: "",
+      caption: "© Konstantin Romanov",
     },
     {
       src: slide4,
       title: "Photo 4",
-      caption: "",
+      caption: "© Konstantin Romanov",
     },
     {
       src: slide5,
       title: "Photo 5",
-      caption: "",
+      caption: "© Konstantin Romanov",
     },
     {
       src: slide6,
       title: "Photo 6",
-      caption: "",
+      caption: "© Konstantin Romanov",
     },
     {
       src: slide7,
       title: "Photo 7",
-      caption: "",
+      caption: "© Konstantin Romanov",
     },
     {
       src: slide8,
       title: "Photo 8",
-      caption: "",
+      caption: "© Konstantin Romanov",
     },
     {
       src: slide9,
       title: "Photo 9",
-      caption: "",
+      caption: "© Konstantin Romanov",
     },
     {
       src: slide10,
       title: "Photo 10",
-      caption: "",
+      caption: "© Konstantin Romanov",
     },
   ],
 };

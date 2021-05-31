@@ -9,9 +9,9 @@ body {
 
 .viewPort {
   margin: 0;
-  padding: 0;    
-  width: 800px;  
-  height: 500px;
+  padding: 0;
+  width: 100vw;
+  height: 300px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -24,12 +24,13 @@ body {
   margin: 0;
   padding: 0;
   width: inherit;
-  height: 100%; 
+  height: 100%;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   /* background-color: rgba(151, 57, 151, 0.4); */
+  /* display: flex; */
 }
 
 .touchArea {
@@ -49,7 +50,7 @@ body {
   padding: 0;
   width: 100vw;
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   display: flex;
   flex-direction: row;
@@ -58,13 +59,14 @@ body {
   transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 99999;
+  /* background-color: rgba(60, 151, 57, 0.4); */
 }
 
 .navButton {
   width: 30%;
   height: auto;
   pointer-events: all;
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: pointer;
   padding: 5px;
 }
@@ -81,7 +83,7 @@ body {
   width: fit-content;
   height: fit-content;
   position: absolute;
-  bottom: 7%;
+  /* top: 300px; */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -93,40 +95,122 @@ body {
 }
 
 .selectionButton {
-  margin: 0 6px;  
+  margin: 0 6px;
   padding: 0 1px;
   width: 15px;
   height: 7px;
   border-radius: 5%;
-  background-color: rgb(255, 255, 255);
+  /* background-color: rgb(255, 255, 255); */
   opacity: 0.5;
+
   pointer-events: all;
   cursor: pointer;
 }
 
 .selectionButton:hover {
-  margin: 0 3px;  
+  margin: 0 3px;
   padding: 0 4px;
   transition: 0.3s;
   opacity: 1;
 }
 
-.card {  
+.card {
   width: 90%;
-  height: inherit;
+  height: 98%;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  /* transform: translateX(-50%); */
+
+  /* padding: 15px; */
+  /* margin: 15px; */
+  /* border: 3px solid #eee; */
+
+
+  /* display: block;
+  justify-content: center;
+  align-items: center; */
+  /* background-color: rgba(57, 148, 151, 0.4); */
+}
+
+.cardMat {
+  /* width: 100%; */
   
+  height: 83%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cardImgWrap {
+  
+  /* min-height: 100%;  */
+  width: 95%;
+  height: 95%;
+  /* position: absolute;
+  left: 50%;
+  transform: translateX(-50%); */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  /* border: 1px solid rgb(231, 32, 32); */
 }
 
 .cardImg {
   max-width: 100%;
   max-height: 100%;
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  /* background-color: rgba(57, 148, 151, 0.4); */
+  /* width: 100%; */
+  /* height: 100%; */
+
+  /* margin-left: auto;
+  margin-right: auto;
+  display: block; */
+  /* height: 90%; */
+  /* position: absolute; */
+  /* top: 50%; */
+  /* left: 50%; */
+  /* transform: translate(-50%, -50%); */
+  /* transform: translateX(-50%); */
+
+
+}
+
+.cardCaption {
+  /* position: absolute;
+  top: 75%;
+  left: 5%;
+  width: 90%;*/
+  height: 11%;
+  padding: 2%;
+  margin-bottom: 2%;
+  text-align: center;
+  height: auto;
+  color: rgba(200, 200, 200, 0.6);
+  /* background-color: rgba(200, 200, 200, 0.6); */
+  /* display: block; */
+  min-height: fit-content;
+  
+
+  /* border: 3px solid #73AD21; */
+}
+
+.card h2{
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: 2px;
+  margin: 0 0;
+  /* opacity: 0.8; */
+
+}
+
+.card p{
+ font-size: 1.2rem;
+  /* opacity: 0.7; */
+  line-height: 1;
+  margin: 0 0;
+
 }

@@ -20,39 +20,50 @@ class Deck extends Component {
         /* ********************* Responsive Code ******************** */
 
         // Set prefered quantity of slides per viewport (will be adjusted to maintain best result)        
-        const imgQty = 2
-        let imgToShow = (this.images.children.length % 2 === 0 && 
+        const imgQty = 2;
+        this.imgToShow = (this.images.children.length % 2 === 0 && 
             imgQty >= this.images.children.length) ? 
             (this.images.children.length - 1) : (this.images.children.length);
-        imgToShow = (imgQty > imgToShow) ? imgToShow : imgQty;   
+            this.imgToShow = (imgQty > this.imgToShow) ? this.imgToShow : (imgQty > 5) ? 5 : imgQty;   
 
-        let imgWidthAsPercentage = 100 / imgToShow;
+        const imgToShowMem = this.imgToShow;
+
+        if (window.innerWidth < 1025 && imgToShowMem > 2) {
+            this.imgToShow = 2;
+        } else if (window.innerWidth < 1201 && imgToShowMem > 3) {
+            this.imgToShow = 3;
+        } else if (window.innerWidth < 1501 && imgToShowMem > 4) {
+            this.imgToShow = 4;
+        } else {
+            this.imgToShow = imgToShowMem;
+        }
+
+        let imgWidthAsPercentage = 100 / this.imgToShow;
         imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;
         
-        let navButtonsPlacementAsPercentage = 100 / imgToShow + 3.5;
-        navButtonsPlacementAsPercentage = window.innerWidth < 768 ? 100 : navButtonsPlacementAsPercentage;
+        // let navButtonsPlacementAsPercentage = 100 / this.imgToShow + 3.5;
+        // navButtonsPlacementAsPercentage = window.innerWidth < 768 ? 100 : navButtonsPlacementAsPercentage;
 
         this.newWidth = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ?
             (imgWidthAsPercentage / 100) * window.screen.width :
             (imgWidthAsPercentage / 100) * window.innerWidth;
         this.images.style.width = `${this.newWidth}px`;       
         
-        this.viewPort.style.width = imgWidthAsPercentage === 100 ?
-            `${this.newWidth}px` : `${this.newWidth * imgToShow}px`;     
+        // this.viewPort.style.width = imgWidthAsPercentage === 100 ?
+        //     `${this.newWidth}px` : `${this.newWidth * this.imgToShow}px`;     
 
-        this.viewPort.style.height = `${this.newWidth / 1.5}px`; 
- 
-        // this.touchArea.style.height = this.viewPort.style.height;
+        this.viewPort.style.height = `${this.newWidth / 1.15}px`;
 
-        this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
+        this.selectionButtonsContainer.style.top =`${this.images.children[0].children[0].clientHeight * 0.97}px`;
+        
+        // this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
         this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
         this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
-
 
         // cloning first and last slide for smooth transition between first and last slide
         this.images.insertAdjacentHTML("afterbegin", this.images.children[this.numberOfCardsByIndex].outerHTML);        
         this.images.insertAdjacentHTML("beforeend", this.images.children[1].outerHTML);   
-
+   
         for(let i = 0; i < this.images.children.length - 2; i++) {
             this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";    
             this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.03}px`; 
@@ -64,14 +75,25 @@ class Deck extends Component {
         this.rightBoundary = parseFloat(this.images.children[this.numberOfCardsByIndex + 2].style.left) + this.newWidth;
         this.leftBoundary = parseFloat(this.images.children[0].style.left) - this.newWidth;
 
+
         this.lastPositions = [];
 
         window.addEventListener("resize", () => {
             
-            imgWidthAsPercentage = 100 / imgToShow;
+            imgWidthAsPercentage = 100 / this.imgToShow;
             imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;
-            navButtonsPlacementAsPercentage = 100 / imgToShow + 3;
-            navButtonsPlacementAsPercentage = window.innerWidth < 768 ? 100 : navButtonsPlacementAsPercentage;
+            // navButtonsPlacementAsPercentage = 100 / this.imgToShow + 3;
+            // navButtonsPlacementAsPercentage = window.innerWidth < 768 ? 100 : navButtonsPlacementAsPercentage;
+
+            if (window.innerWidth < 1025 && imgToShowMem > 2) {
+                this.imgToShow = 2;
+            } else if (window.innerWidth < 1201 && imgToShowMem > 3) {
+                this.imgToShow = 3;
+            } else if (window.innerWidth < 1501 && imgToShowMem > 4) {
+                this.imgToShow = 4;
+            } else {
+                this.imgToShow = imgToShowMem;
+            }
 
             this.newWidth = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ?
                 (imgWidthAsPercentage / 100) * window.screen.width :
@@ -79,17 +101,17 @@ class Deck extends Component {
                    
             this.images.style.width = `${this.newWidth}px`; 
 
-            this.viewPort.style.width = imgWidthAsPercentage === 100 ?
-                `${this.newWidth}px` : `${this.newWidth * imgToShow}px`; 
+            // this.viewPort.style.width = imgWidthAsPercentage === 100 ?
+            //     `${this.newWidth}px` : `${this.newWidth * this.imgToShow}px`;  
 
-            this.viewPort.style.height = `${this.newWidth / 1.5}px`;   
-            // this.touchArea.style.height = this.viewPort.style.height;
-            
-            this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
+            this.viewPort.style.height = `${this.newWidth / 1.15}px`;  
+                        
+            this.selectionButtonsContainer.style.top =`${this.images.children[0].children[0].clientHeight * 0.97}px`;
+
+            // this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
             this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
             this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
-
-           
+          
             for(let i = 0; i < this.images.children.length - 2; i++) {
                 this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";  
                 this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.03}px`; 
@@ -116,6 +138,10 @@ class Deck extends Component {
 
             let hide = () => {  
                 this.viewPort.style.cursor = "none";
+                this.navButtonsContainer.children[0].style.transitionDuration = "1.5s";
+                this.navButtonsContainer.children[1].style.transitionDuration = "1.5s";
+                this.navButtonsContainer.children[0].style.opacity = 0.4;
+                this.navButtonsContainer.children[1].style.opacity = 0.4;
                 // console.log('hide');
                 justHidden = true;
                 setTimeout(() => {
@@ -129,6 +155,10 @@ class Deck extends Component {
                     // console.log('move');
                     clearTimeout(j);
                     this.viewPort.style.cursor = "default";
+                    this.navButtonsContainer.children[0].style.transitionDuration = "0.5s";
+                    this.navButtonsContainer.children[1].style.transitionDuration = "0.5s";
+                    this.navButtonsContainer.children[0].style.opacity = 1;
+                    this.navButtonsContainer.children[1].style.opacity = 1;
                     j = setTimeout(hide, 1000);
                 }                
             })    
@@ -136,6 +166,10 @@ class Deck extends Component {
 
         /* ****************************************************************** */
         
+        // window.addEventListener("load", () => {
+        //     console.log("height4", this.images.children[0].children[0].clientHeight);
+        //     this.selectionButtonsContainer.style.top =`${this.images.children[0].children[0].firstChild.clientHeight}px`;
+        // });
 
         /* ******************* Keyboard arrows keys navigation ************** */
 
@@ -200,7 +234,6 @@ class Deck extends Component {
 
         this.mouseOver = false;
         this.wheelTimeoutId = null;
-
 
         this.touchArea.addEventListener("mouseover", this.handleMouseOver, {
             passive: false,
@@ -271,11 +304,14 @@ class Deck extends Component {
     }
     
     updateSelection = () => {
+
         for (let i = 0; i < this.images.children.length - 2; i++) {
             if (i === this.currentCard) {
+                this.selectionButtonsContainer.children[i].style.transitionDuration = "0.0s";
                 this.selectionButtonsContainer.children[i].style.backgroundColor = "red";
                 this.selectionButtonsContainer.children[i].style.opacity = 1;
             } else {
+                this.selectionButtonsContainer.children[i].style.transitionDuration = "0.5s";
                 this.selectionButtonsContainer.children[i].style.backgroundColor = "white";
                 this.selectionButtonsContainer.children[i].style.opacity = null;
             }                       
@@ -291,19 +327,21 @@ class Deck extends Component {
             this.images.children[i].style.transitionDuration = "0.0s";
             if (i < this.middleCardByIndex) {
                 this.images.children[i].style.left = `${-1 * ((counterForLeft * this.newWidth) - (this.newWidth / 2))}px`;
-                counterForLeft--;
+                counterForLeft--;                
             } else if (i > this.middleCardByIndex) {
                 this.images.children[i].style.left = `${(counterForRight * this.newWidth) + (this.newWidth / 2)}px`;
-                counterForRight++;
+                counterForRight++;                
             } else {
-                this.images.children[i].style.left = `${this.newWidth / 2}px`;
+                this.images.children[i].style.left = `${this.newWidth / 2}px`;                
             }
         }
+
+        this.handleCaptions();
     }
 
     handleBoundaries = () => {
          
-        if (this.lastPositions[0] <= this.leftBoundary) {
+        if (this.lastPositions[0] * 1.01 <= this.leftBoundary) {
             const endOfDeck = this.lastPositions[this.numberOfCardsByIndex + 2] + this.newWidth;              
         
             this.images.removeChild(this.images.children[0]);
@@ -312,7 +350,7 @@ class Deck extends Component {
             this.images.children[this.numberOfCardsByIndex + 2].style.left = `${endOfDeck}px`;        
             this.lastPositions.splice(this.numberOfCardsByIndex + 2, 0, this.lastPositions.shift());        
         }
-        if (this.lastPositions[this.numberOfCardsByIndex + 2] >= this.rightBoundary) {
+        if (this.lastPositions[this.numberOfCardsByIndex + 2] * 1.01 >= this.rightBoundary) {
             const beginningOfDeck = this.lastPositions[0] - this.newWidth;         
        
             this.images.removeChild(this.images.children[this.numberOfCardsByIndex + 2]);
@@ -321,6 +359,7 @@ class Deck extends Component {
             this.images.children[0].style.left = `${beginningOfDeck}px`;        
             this.lastPositions.splice(0, 0, this.lastPositions.pop());        
         }
+        
     }
 
     /* ***************************** Wheel navigation ******************* */
@@ -344,6 +383,11 @@ class Deck extends Component {
         clearTimeout(this.wheelTimeoutId);
         if (this.snapInProgress) return;        
         this.stopAutoplay();
+
+        for (let i = 0; i < this.images.children.length; i++) {            
+            this.images.children[i].children[1].style.transitionDuration = "0.0s";
+            this.images.children[i].children[1].style.visibility = "hidden"; 
+        }
 
         let difference = event.deltaY * 1.7;
         this.swapDist += difference;
@@ -427,7 +471,7 @@ class Deck extends Component {
             this.seed = 0.0;
             this.swapDist = 0;
             setTimeout(() => {
-                
+                this.handleCaptions();
             }, 200);
             return;
         }
@@ -449,6 +493,12 @@ class Deck extends Component {
         if(event.touches.length > 1) return;             
     
         this.stopAutoplay();
+
+        for (let i = 0; i < this.images.children.length; i++) {            
+            this.images.children[i].children[1].style.transitionDuration = "0.0s";
+            this.images.children[i].children[1].style.visibility = "hidden"; 
+        }
+
         this.swapDist = 0;
         this.frameCounter = 0;
         this.startTouchPostition = event.changedTouches[0].screenX;
@@ -473,7 +523,7 @@ class Deck extends Component {
         for (let i = 0; i < this.images.children.length; i++) {
             this.updatedPosition = this.lastPositions[i] + difference;
             this.images.children[i].style.left = `${this.updatedPosition}px`;
-            this.lastPositions[i] = this.updatedPosition;            
+            this.lastPositions[i] = this.updatedPosition;                       
         }
 
         if (this.frameCounter < (this.newWidth * -1.0)) {
@@ -488,7 +538,7 @@ class Deck extends Component {
             this.frameCounter = 0;             
         }
         
-        this.handleBoundaries();
+        this.handleBoundaries(); 
         
     };
 
@@ -523,6 +573,7 @@ class Deck extends Component {
 
         this.handleBoundaries();
         this.updateSelection();
+        this.handleCaptions();
                 
         setTimeout(() => {
             this.scrollInProgress = false;
@@ -549,6 +600,7 @@ class Deck extends Component {
 
         this.handleBoundaries();
         this.updateSelection();
+        this.handleCaptions();
         
         setTimeout(() => {
             this.scrollInProgress = false;
@@ -586,11 +638,28 @@ class Deck extends Component {
 
         this.currentCard = newCard;
         this.updateSelection();
+        this.handleCaptions();
         this.startAutoplay();
     }
         
     /* ********************************************************** */
     
+    handleCaptions = () => {
+        // let captionsToShow = this.imgToShow % 2 === 0 ? this.imgToShow - 1 : this.imgToShow;
+
+        for (let i = 0; i < this.images.children.length; i++) {            
+            this.images.children[i].children[1].style.transitionDuration = "0.0s";
+            this.images.children[i].children[1].style.visibility = "hidden"; 
+        }
+
+        setTimeout(() => {
+            this.images.children[this.middleCardByIndex].children[1].style.transitionDuration = "0.7s";
+            this.images.children[this.middleCardByIndex].children[1].style.visibility = "visible";
+        }, 700);
+
+        // console.log("left", this.leftBoundary, "right", this.rightBoundary);
+        // console.log("lastPositions[0]", this.lastPositions[0], "lastPositions[1]", this.lastPositions[1]);
+    }
     
     
     /* ********************* Autoplay Code ********************** */
@@ -614,6 +683,7 @@ class Deck extends Component {
         
                 this.handleBoundaries();
                 this.updateSelection();
+                this.handleCaptions();
             }, 5100)
         }, 3500);
     }
@@ -638,7 +708,7 @@ class Deck extends Component {
                     <div ref={refId => this.images = refId} className="imagesContainer"> 
                         {this.state.cards.map((item, index) => {
                                 return (
-                                    <Card source={`${item.src}`} id={index} key={index} />                                    
+                                    <Card source={`${item.src}`} title={`${item.title}`} caption={`${item.caption}`} id={index} key={index} />                                    
                                 )
                             }, this)
                         } 
