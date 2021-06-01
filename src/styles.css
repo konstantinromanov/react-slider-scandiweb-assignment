@@ -31,6 +31,7 @@ body {
   transform: translate(-50%, -50%);
   /* background-color: rgba(151, 57, 151, 0.4); */
   /* display: flex; */
+  touch-action: auto;
 }
 
 .touchArea {
@@ -42,7 +43,8 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 9999;
+  z-index: 999;
+  /* background-color: rgba(151, 91, 57, 0.4); */
 }
 
 .navButtonsContainer {
@@ -58,7 +60,7 @@ body {
   align-items: center;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  z-index: 99999;
+  z-index: 9999;
   /* background-color: rgba(60, 151, 57, 0.4); */
 }
 
@@ -68,13 +70,20 @@ body {
   pointer-events: all;
   opacity: 0.4;
   cursor: pointer;
-  padding: 5px;
+  padding: 0.7%;
 }
 
 .navButton:hover {
   transition: 0.5s;
   opacity: 1;
+  padding: 0.3%;  
+}
+
+.navButton:active{
+  transition: 0.3s;
+  opacity: 1;
   padding: 0px;
+  filter: invert(50%);
 }
 
 .selectionButtonsContainer {
@@ -83,7 +92,7 @@ body {
   width: fit-content;
   height: fit-content;
   position: absolute;
-  /* top: 300px; */
+  top: calc(97% - 90px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -95,7 +104,7 @@ body {
 }
 
 .selectionButton {
-  margin: 0 6px;
+  margin: 6px 6px;
   padding: 0 1px;
   width: 15px;
   height: 7px;
@@ -105,10 +114,11 @@ body {
 
   pointer-events: all;
   cursor: pointer;
+  z-index: 99999;
 }
 
 .selectionButton:hover {
-  margin: 0 3px;
+  margin: 6px 3px;
   padding: 0 4px;
   transition: 0.3s;
   opacity: 1;
@@ -132,15 +142,19 @@ body {
   justify-content: center;
   align-items: center; */
   /* background-color: rgba(57, 148, 151, 0.4); */
+  background-color: #2b2b2b;
 }
 
 .cardMat {
   /* width: 100%; */
   
-  height: 83%;
+  /* height: 83%; */
+  height: calc(100% - 70px);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 0;
+  /* border: 1px solid rgb(231, 32, 32); */
 }
 
 .cardImgWrap {
@@ -155,7 +169,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  
+  z-index: 0;
   /* border: 1px solid rgb(231, 32, 32); */
 }
 
@@ -164,7 +178,7 @@ body {
   max-height: 100%;
   /* width: 100%; */
   /* height: 100%; */
-
+  
   /* margin-left: auto;
   margin-right: auto;
   display: block; */
@@ -183,8 +197,8 @@ body {
   top: 75%;
   left: 5%;
   width: 90%;*/
-  height: 11%;
-  padding: 2%;
+  
+  padding:0 0 0 8px;
   margin-bottom: 2%;
   text-align: center;
   height: auto;
@@ -195,6 +209,7 @@ body {
   
 
   /* border: 3px solid #73AD21; */
+  z-index: 0;
 }
 
 .card h2{

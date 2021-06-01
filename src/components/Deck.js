@@ -20,7 +20,7 @@ class Deck extends Component {
         /* ********************* Responsive Code ******************** */
 
         // Set prefered quantity of slides per viewport (will be adjusted to maintain best result)        
-        const imgQty = 2;
+        const imgQty = 5;
         this.imgToShow = (this.images.children.length % 2 === 0 && 
             imgQty >= this.images.children.length) ? 
             (this.images.children.length - 1) : (this.images.children.length);
@@ -52,9 +52,11 @@ class Deck extends Component {
         // this.viewPort.style.width = imgWidthAsPercentage === 100 ?
         //     `${this.newWidth}px` : `${this.newWidth * this.imgToShow}px`;     
 
-        this.viewPort.style.height = `${this.newWidth / 1.15}px`;
-
-        this.selectionButtonsContainer.style.top =`${this.images.children[0].children[0].clientHeight * 0.97}px`;
+        this.viewPort.style.height = `${this.newWidth / 1.5 + 90}px`;
+        // document.getElementsByClassName("cardMat").style.height = `${this.newWidth / 1.5}px`;
+        // this.images.children[0].children[0].style.height = `${this.newWidth / 1.5}px`;
+// console.log("cardMat", this.images.children[0].children[0].style.height);
+        // this.selectionButtonsContainer.style.top =`${this.images.children[0].children[0].clientHeight * 0.97}px`;
         
         // this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
         this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
@@ -104,9 +106,9 @@ class Deck extends Component {
             // this.viewPort.style.width = imgWidthAsPercentage === 100 ?
             //     `${this.newWidth}px` : `${this.newWidth * this.imgToShow}px`;  
 
-            this.viewPort.style.height = `${this.newWidth / 1.15}px`;  
+            this.viewPort.style.height = `${this.newWidth / 1.5 + 90}px`;  
                         
-            this.selectionButtonsContainer.style.top =`${this.images.children[0].children[0].clientHeight * 0.97}px`;
+            // this.selectionButtonsContainer.style.top =`${this.images.children[0].children[0].clientHeight * 0.97}px`;
 
             // this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
             this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
@@ -138,10 +140,10 @@ class Deck extends Component {
 
             let hide = () => {  
                 this.viewPort.style.cursor = "none";
-                this.navButtonsContainer.children[0].style.transitionDuration = "1.5s";
-                this.navButtonsContainer.children[1].style.transitionDuration = "1.5s";
-                this.navButtonsContainer.children[0].style.opacity = 0.4;
-                this.navButtonsContainer.children[1].style.opacity = 0.4;
+                // this.navButtonsContainer.children[0].style.transitionDuration = "1.5s";
+                // this.navButtonsContainer.children[1].style.transitionDuration = "1.5s";
+                // this.navButtonsContainer.children[0].style.opacity = 0.4;
+                // this.navButtonsContainer.children[1].style.opacity = 0.4;
                 // console.log('hide');
                 justHidden = true;
                 setTimeout(() => {
@@ -155,10 +157,10 @@ class Deck extends Component {
                     // console.log('move');
                     clearTimeout(j);
                     this.viewPort.style.cursor = "default";
-                    this.navButtonsContainer.children[0].style.transitionDuration = "0.5s";
-                    this.navButtonsContainer.children[1].style.transitionDuration = "0.5s";
-                    this.navButtonsContainer.children[0].style.opacity = 1;
-                    this.navButtonsContainer.children[1].style.opacity = 1;
+                    // this.navButtonsContainer.children[0].style.transitionDuration = "0.5s";
+                    // this.navButtonsContainer.children[1].style.transitionDuration = "0.5s";
+                    // this.navButtonsContainer.children[0].style.opacity = 1;
+                    // this.navButtonsContainer.children[1].style.opacity = 1;
                     j = setTimeout(hide, 1000);
                 }                
             })    
@@ -190,6 +192,21 @@ class Deck extends Component {
             }, 500);
             
         }, true);
+
+        // if (!mobDevice) {
+        //     this.navButtonsContainer.children[0].addEventListener("mouseover", this.handleMouseOverNavButton, {
+        //         passive: false,
+        //     });
+        //     this.navButtonsContainer.children[1].addEventListener("mouseover", this.handleMouseOverNavButton, {
+        //         passive: false,
+        //     });
+        //     this.navButtonsContainer.children[0].addEventListener("mouseleave", this.handleMouseLeftNavButton, {
+        //         passive: false,
+        //     });
+        //     this.navButtonsContainer.children[1].addEventListener("mouseleave", this.handleMouseLeftNavButton, {
+        //         passive: false,
+        //     });
+        // }
 
         /* ********************************************************** */
 
@@ -235,16 +252,17 @@ class Deck extends Component {
         this.mouseOver = false;
         this.wheelTimeoutId = null;
 
-        this.touchArea.addEventListener("mouseover", this.handleMouseOver, {
-            passive: false,
-        });
-        this.touchArea.addEventListener("mouseleave", this.handleMouseLeave, {
-            passive: false,
-        });
-        this.touchArea.addEventListener("wheel", this.handleWheel, {
-            passive: false,
-        });
-
+        if (!mobDevice) {
+            this.touchArea.addEventListener("mouseover", this.handleMouseOver, {
+                passive: false,
+            });
+            this.touchArea.addEventListener("mouseleave", this.handleMouseLeave, {
+                passive: false,
+            });
+            this.touchArea.addEventListener("wheel", this.handleWheel, {
+                passive: false,
+            });
+        }
         /* ****************************************************************** */
 
         /* ***************************** Touch navigation ******************* */
@@ -253,7 +271,7 @@ class Deck extends Component {
         this.updatedPosition = 0.0;
         this.speedModifier = 0.8;       
                 
-        this.swapDist = 0;
+        this.distanceScrolled = 0;
         this.frameCounter = 0;
 
         for (let i = 0; i < this.images.children.length; i++) {
@@ -303,6 +321,16 @@ class Deck extends Component {
 
     }
     
+    // handleMouseOverNavButton = () => {
+    // //     this.navButtonsContainer.children[0].style.opacity = 1;
+    // //     this.navButtonsContainer.children[1].style.opacity = 1;
+    // }
+
+    // handleMouseLeftNavButton = () => {
+    //     // this.navButtonsContainer.children[0].style.opacity = 0.4;
+    //     // this.navButtonsContainer.children[1].style.opacity = 0.4;
+    // }
+
     updateSelection = () => {
 
         for (let i = 0; i < this.images.children.length - 2; i++) {
@@ -311,8 +339,9 @@ class Deck extends Component {
                 this.selectionButtonsContainer.children[i].style.backgroundColor = "red";
                 this.selectionButtonsContainer.children[i].style.opacity = 1;
             } else {
-                this.selectionButtonsContainer.children[i].style.transitionDuration = "0.5s";
+                this.selectionButtonsContainer.children[i].style.transitionDuration = "1.7s";
                 this.selectionButtonsContainer.children[i].style.backgroundColor = "white";
+                this.selectionButtonsContainer.children[i].style.transitionDuration = "0.3s";
                 this.selectionButtonsContainer.children[i].style.opacity = null;
             }                       
         }                
@@ -320,6 +349,8 @@ class Deck extends Component {
 
     orderCards = () => {
         //const cardWidth = parseFloat(getComputedStyle(this.images.children[0]).width);
+        this.startCaptionTrans();
+
         let counterForRight = 1;
         let counterForLeft = this.middleCardByIndex;   
 
@@ -335,8 +366,8 @@ class Deck extends Component {
                 this.images.children[i].style.left = `${this.newWidth / 2}px`;                
             }
         }
-
-        this.handleCaptions();
+        
+        this.finishCaptionTrans();
     }
 
     handleBoundaries = () => {
@@ -381,7 +412,8 @@ class Deck extends Component {
     handleWheel = (event) => {
         event.preventDefault();
         clearTimeout(this.wheelTimeoutId);
-        if (this.snapInProgress) return;        
+        if (this.snapInProgress) return;
+        this.startCaptionTrans();    
         this.stopAutoplay();
 
         for (let i = 0; i < this.images.children.length; i++) {            
@@ -390,7 +422,7 @@ class Deck extends Component {
         }
 
         let difference = event.deltaY * 1.7;
-        this.swapDist += difference;
+        this.distanceScrolled += difference;
         this.frameCounter += difference;
         
         if (this.mouseOver) {
@@ -402,23 +434,25 @@ class Deck extends Component {
             }
         
             while (Math.abs(this.frameCounter) > this.newWidth) {
-                if (this.swapDist < (this.newWidth * -1.0)) {  
+                if (this.distanceScrolled < (this.newWidth * -1.0)) {  
                     this.currentCard = (this.currentCard === this.numberOfCardsByIndex) ? 0 : ++this.currentCard;         
                     this.updateSelection(); 
                     this.frameCounter -= (this.newWidth * -1.0);         
                 }
         
-                if (this.swapDist > this.newWidth) {
+                if (this.distanceScrolled > this.newWidth) {
                     this.currentCard = (this.currentCard === 0) ? this.numberOfCardsByIndex : --this.currentCard; 
                     this.updateSelection(); 
                     this.frameCounter -= this.newWidth;
                 }
             }
                         
-            this.handleBoundaries();            
+            this.handleBoundaries();    
+                   
             
             this.wheelTimeoutId = setTimeout(() => {
-                this.frameCounter = 0;               
+                this.frameCounter = 0;  
+                             
                 this.snapBack();
                 this.startAutoplay();
             }, 70);
@@ -432,7 +466,8 @@ class Deck extends Component {
 
     snapBack = () => {
         this.snapInProgress = true;
-        let swapRem = this.swapDist % this.newWidth;       
+        clearTimeout(this.showCaption);
+        let swapRem = this.distanceScrolled % this.newWidth;       
 
         /* set snapBack sensivity. 2 will cause snapBack if swipe is less then half of the slide. */
         let snapSens = 4;
@@ -466,13 +501,19 @@ class Deck extends Component {
 
             this.handleBoundaries();
             this.updateSelection();            
-
-            this.snapInProgress = false;
+            
+            this.showCaption = setTimeout(() => {                
+                this.startCaptionTrans();
+                this.finishCaptionTrans();
+            }, 700);
+            
             this.seed = 0.0;
-            this.swapDist = 0;
+            this.distanceScrolled = 0;
+
             setTimeout(() => {
-                this.handleCaptions();
+                this.snapInProgress = false;
             }, 200);
+            
             return;
         }
 
@@ -490,16 +531,10 @@ class Deck extends Component {
   /* ***************************** Touch navigation ******************* */
 
     handleTouchStart = (event) => {          
-        if(event.touches.length > 1) return;             
-    
-        this.stopAutoplay();
-
-        for (let i = 0; i < this.images.children.length; i++) {            
-            this.images.children[i].children[1].style.transitionDuration = "0.0s";
-            this.images.children[i].children[1].style.visibility = "hidden"; 
-        }
-
-        this.swapDist = 0;
+        if(event.touches.length > 1) return;  
+        this.stopAutoplay();        
+        
+        this.distanceScrolled = 0;
         this.frameCounter = 0;
         this.startTouchPostition = event.changedTouches[0].screenX;
 
@@ -511,11 +546,13 @@ class Deck extends Component {
     handleTouchMove = (event) => {
         event.preventDefault();
         if (this.snapInProgress) return; 
-       
+        this.startCaptionTrans();
+        clearTimeout(this.showCaption);
+
         const currentTouchPosition = event.changedTouches[0].screenX;
         let difference = currentTouchPosition - this.startTouchPostition;
         difference *= this.speedModifier;
-        this.swapDist += difference;
+        this.distanceScrolled += difference;
         this.frameCounter += difference;
 
         this.startTouchPostition = currentTouchPosition;
@@ -556,6 +593,8 @@ class Deck extends Component {
 
     handleNext = () => {
         if (this.scrollInProgress) return;
+        clearTimeout(this.showCaption);
+        this.startCaptionTrans();
         this.stopAutoplay();   
         
         this.scrollInProgress = true;
@@ -572,8 +611,11 @@ class Deck extends Component {
         this.currentCard = (this.currentCard === this.numberOfCardsByIndex) ? 0 : ++this.currentCard;
 
         this.handleBoundaries();
-        this.updateSelection();
-        this.handleCaptions();
+        this.updateSelection();        
+        
+        this.showCaption = setTimeout(() => {
+            this.finishCaptionTrans();
+        }, 300);
                 
         setTimeout(() => {
             this.scrollInProgress = false;
@@ -582,9 +624,11 @@ class Deck extends Component {
     }
 
     handlePrev = () => {
-        if (this.scrollInProgress) return;   
+        if (this.scrollInProgress) return;  
+        clearTimeout(this.showCaption);
+        this.startCaptionTrans(); 
         this.stopAutoplay();
-
+       
         this.scrollInProgress = true;
        
         for (let i = 0; i < this.images.children.length; i++) {
@@ -600,10 +644,13 @@ class Deck extends Component {
 
         this.handleBoundaries();
         this.updateSelection();
-        this.handleCaptions();
+
+        this.showCaption = setTimeout(() => {
+            this.finishCaptionTrans();
+        }, 300);        
         
         setTimeout(() => {
-            this.scrollInProgress = false;
+            this.scrollInProgress = false;            
             this.startAutoplay();
         }, 500);
     }
@@ -614,6 +661,7 @@ class Deck extends Component {
 
     handleSelection = event => {
         if (event.target === this.selectionButtonsContainer) return;
+        this.startCaptionTrans();
         this.stopAutoplay();
         
         let newCard = null;
@@ -638,29 +686,26 @@ class Deck extends Component {
 
         this.currentCard = newCard;
         this.updateSelection();
-        this.handleCaptions();
+        this.finishCaptionTrans();
         this.startAutoplay();
     }
         
     /* ********************************************************** */
-    
-    handleCaptions = () => {
-        // let captionsToShow = this.imgToShow % 2 === 0 ? this.imgToShow - 1 : this.imgToShow;
 
+    /* ************** Captions handling ************************* */
+    startCaptionTrans = () => {
         for (let i = 0; i < this.images.children.length; i++) {            
             this.images.children[i].children[1].style.transitionDuration = "0.0s";
             this.images.children[i].children[1].style.visibility = "hidden"; 
         }
+    }
 
-        setTimeout(() => {
-            this.images.children[this.middleCardByIndex].children[1].style.transitionDuration = "0.7s";
-            this.images.children[this.middleCardByIndex].children[1].style.visibility = "visible";
-        }, 700);
-
-        // console.log("left", this.leftBoundary, "right", this.rightBoundary);
-        // console.log("lastPositions[0]", this.lastPositions[0], "lastPositions[1]", this.lastPositions[1]);
+    finishCaptionTrans = () => {
+        this.images.children[this.middleCardByIndex].children[1].style.transitionDuration = "0.7s";
+        this.images.children[this.middleCardByIndex].children[1].style.visibility = "visible";        
     }
     
+    /* ********************************************************** */
     
     /* ********************* Autoplay Code ********************** */
 
@@ -670,6 +715,8 @@ class Deck extends Component {
 
         this.autoplayTimeoutId = setTimeout(() => {
             this.autoplayIntervalId = setInterval(() => {
+                this.startCaptionTrans();
+
                 for (let i = 0; i < this.images.children.length; i++) {
                     this.images.children[i].style.transitionDuration = "1.2s";
         
@@ -683,9 +730,13 @@ class Deck extends Component {
         
                 this.handleBoundaries();
                 this.updateSelection();
-                this.handleCaptions();
+                
+                this.showCaption = setTimeout(() => {
+                    this.finishCaptionTrans();
+                }, 1200);
+
             }, 5100)
-        }, 3500);
+        }, 10500);
     }
         
     /* ********************* Stop autoplay ********************** */

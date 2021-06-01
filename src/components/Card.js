@@ -8,11 +8,11 @@ function Card(props) {
                     <img className="cardImg" src={props.source} alt="image" />
                 </div>  
             </div>
-                <div className="cardCaption">
-                    <h2>{props.title}</h2>
-                    <p>{props.caption}</p>
-                    
-                </div>  
+            <div className="cardCaption">
+                <h2>{props.title}</h2>
+                <p>{props.caption}</p>
+                
+            </div> 
            
         </div>
     )    
