@@ -20,7 +20,7 @@ class Deck extends Component {
         /* ********************* Responsive Code ******************** */
 
         // Set prefered quantity of slides per viewport (will be adjusted to maintain best result)        
-        const imgQty = 5;
+        const imgQty = 6;
         this.imgToShow = (this.images.children.length % 2 === 0 && 
             imgQty >= this.images.children.length) ? 
             (this.images.children.length - 1) : (this.images.children.length);
@@ -37,28 +37,17 @@ class Deck extends Component {
         } else {
             this.imgToShow = imgToShowMem;
         }
-
+    
         let imgWidthAsPercentage = 100 / this.imgToShow;
-        imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;
-        
-        // let navButtonsPlacementAsPercentage = 100 / this.imgToShow + 3.5;
-        // navButtonsPlacementAsPercentage = window.innerWidth < 768 ? 100 : navButtonsPlacementAsPercentage;
+        imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;  
 
         this.newWidth = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ?
             (imgWidthAsPercentage / 100) * window.screen.width :
             (imgWidthAsPercentage / 100) * window.innerWidth;
-        this.images.style.width = `${this.newWidth}px`;       
+        this.images.style.width = `${this.newWidth}px`;    
         
-        // this.viewPort.style.width = imgWidthAsPercentage === 100 ?
-        //     `${this.newWidth}px` : `${this.newWidth * this.imgToShow}px`;     
-
         this.viewPort.style.height = `${this.newWidth / 1.5 + 90}px`;
-        // document.getElementsByClassName("cardMat").style.height = `${this.newWidth / 1.5}px`;
-        // this.images.children[0].children[0].style.height = `${this.newWidth / 1.5}px`;
-// console.log("cardMat", this.images.children[0].children[0].style.height);
-        // this.selectionButtonsContainer.style.top =`${this.images.children[0].children[0].clientHeight * 0.97}px`;
-        
-        // this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
+       
         this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
         this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
 
@@ -77,16 +66,10 @@ class Deck extends Component {
         this.rightBoundary = parseFloat(this.images.children[this.numberOfCardsByIndex + 2].style.left) + this.newWidth;
         this.leftBoundary = parseFloat(this.images.children[0].style.left) - this.newWidth;
 
-
         this.lastPositions = [];
 
-        window.addEventListener("resize", () => {
-            
-            imgWidthAsPercentage = 100 / this.imgToShow;
-            imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;
-            // navButtonsPlacementAsPercentage = 100 / this.imgToShow + 3;
-            // navButtonsPlacementAsPercentage = window.innerWidth < 768 ? 100 : navButtonsPlacementAsPercentage;
-
+        window.addEventListener("resize", () => {            
+    
             if (window.innerWidth < 1025 && imgToShowMem > 2) {
                 this.imgToShow = 2;
             } else if (window.innerWidth < 1201 && imgToShowMem > 3) {
@@ -97,20 +80,17 @@ class Deck extends Component {
                 this.imgToShow = imgToShowMem;
             }
 
+            imgWidthAsPercentage = 100 / this.imgToShow;
+            imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;
+   
             this.newWidth = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ?
                 (imgWidthAsPercentage / 100) * window.screen.width :
                 (imgWidthAsPercentage / 100) * window.innerWidth; 
                    
             this.images.style.width = `${this.newWidth}px`; 
-
-            // this.viewPort.style.width = imgWidthAsPercentage === 100 ?
-            //     `${this.newWidth}px` : `${this.newWidth * this.imgToShow}px`;  
-
+           
             this.viewPort.style.height = `${this.newWidth / 1.5 + 90}px`;  
-                        
-            // this.selectionButtonsContainer.style.top =`${this.images.children[0].children[0].clientHeight * 0.97}px`;
-
-            // this.navButtonsContainer.style.width = `${navButtonsPlacementAsPercentage}vw`;
+               
             this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
             this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
           
@@ -133,18 +113,14 @@ class Deck extends Component {
         /* ********** Hide mouse cursor above viewport when not moving ************* */
                 
         let mobDevice = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
+        
         if (!mobDevice) {
             let justHidden = false;
             let j;
-
+            let navFlash;
             let hide = () => {  
-                this.viewPort.style.cursor = "none";
-                // this.navButtonsContainer.children[0].style.transitionDuration = "1.5s";
-                // this.navButtonsContainer.children[1].style.transitionDuration = "1.5s";
-                // this.navButtonsContainer.children[0].style.opacity = 0.4;
-                // this.navButtonsContainer.children[1].style.opacity = 0.4;
-                // console.log('hide');
+                this.viewPort.style.cursor = "none";                
+                navFlash = true;               
                 justHidden = true;
                 setTimeout(() => {
                     justHidden = false;
@@ -153,14 +129,24 @@ class Deck extends Component {
 
             this.viewPort.addEventListener("mousemove", e => {                
                 if (!justHidden) {
-                    justHidden = false;
-                    // console.log('move');
+                    justHidden = false;                    
                     clearTimeout(j);
                     this.viewPort.style.cursor = "default";
-                    // this.navButtonsContainer.children[0].style.transitionDuration = "0.5s";
-                    // this.navButtonsContainer.children[1].style.transitionDuration = "0.5s";
-                    // this.navButtonsContainer.children[0].style.opacity = 1;
-                    // this.navButtonsContainer.children[1].style.opacity = 1;
+                    if (navFlash) {
+                        for (let i = 0; i < 2; i++) {
+                            this.navButtonsContainer.children[i].style.transitionDuration = "0.5s";
+                            this.navButtonsContainer.children[i].style.opacity = 1;
+                            this.navButtonsContainer.children[i].style.padding = "0.3%";                            
+                        }                        
+                        navFlash = false;
+                        setTimeout(() => {
+                            for (let i = 0; i < 2; i++) {
+                                this.navButtonsContainer.children[i].style.opacity = null;
+                                this.navButtonsContainer.children[i].style.padding = null;  
+                                this.navButtonsContainer.children[i].style.transitionDuration = null;                                                         
+                            }
+                        }, 1000);
+                    }                    
                     j = setTimeout(hide, 1000);
                 }                
             })    
@@ -168,11 +154,6 @@ class Deck extends Component {
 
         /* ****************************************************************** */
         
-        // window.addEventListener("load", () => {
-        //     console.log("height4", this.images.children[0].children[0].clientHeight);
-        //     this.selectionButtonsContainer.style.top =`${this.images.children[0].children[0].firstChild.clientHeight}px`;
-        // });
-
         /* ******************* Keyboard arrows keys navigation ************** */
 
         document.addEventListener( "keydown", function( event ) {
@@ -192,22 +173,7 @@ class Deck extends Component {
             }, 500);
             
         }, true);
-
-        // if (!mobDevice) {
-        //     this.navButtonsContainer.children[0].addEventListener("mouseover", this.handleMouseOverNavButton, {
-        //         passive: false,
-        //     });
-        //     this.navButtonsContainer.children[1].addEventListener("mouseover", this.handleMouseOverNavButton, {
-        //         passive: false,
-        //     });
-        //     this.navButtonsContainer.children[0].addEventListener("mouseleave", this.handleMouseLeftNavButton, {
-        //         passive: false,
-        //     });
-        //     this.navButtonsContainer.children[1].addEventListener("mouseleave", this.handleMouseLeftNavButton, {
-        //         passive: false,
-        //     });
-        // }
-
+        
         /* ********************************************************** */
 
         /* ******** Pause slider when browser tab is switched to another ********* */
@@ -318,19 +284,8 @@ class Deck extends Component {
         this.snapSpeedModifier = 0.05;
 
       /* ****************************************************************** */
-
     }
     
-    // handleMouseOverNavButton = () => {
-    // //     this.navButtonsContainer.children[0].style.opacity = 1;
-    // //     this.navButtonsContainer.children[1].style.opacity = 1;
-    // }
-
-    // handleMouseLeftNavButton = () => {
-    //     // this.navButtonsContainer.children[0].style.opacity = 0.4;
-    //     // this.navButtonsContainer.children[1].style.opacity = 0.4;
-    // }
-
     updateSelection = () => {
 
         for (let i = 0; i < this.images.children.length - 2; i++) {
@@ -348,7 +303,7 @@ class Deck extends Component {
     }
 
     orderCards = () => {
-        //const cardWidth = parseFloat(getComputedStyle(this.images.children[0]).width);
+        
         this.startCaptionTrans();
 
         let counterForRight = 1;
@@ -455,12 +410,11 @@ class Deck extends Component {
                              
                 this.snapBack();
                 this.startAutoplay();
-            }, 70);
+            }, 100);
         }        
     };
     
     /* ****************************************************************** */
-
 
     /* ***************************** Snap Back Logic ******************* */
 
@@ -586,8 +540,7 @@ class Deck extends Component {
         this.startAutoplay();  
     };
 
-    /* ****************************************************************** */
-    
+    /* ****************************************************************** */    
     
     /* ********************* Button Navigation ****************** */   
 
@@ -598,6 +551,11 @@ class Deck extends Component {
         this.stopAutoplay();   
         
         this.scrollInProgress = true;
+        
+        this.navButtonsContainer.children[1].style.transitionDuration = "0.5s";
+        this.navButtonsContainer.children[1].style.opacity = 1;
+        this.navButtonsContainer.children[1].style.filter = "invert(50%)";
+        this.navButtonsContainer.children[1].style.padding = "0.0%";
         
         for (let i = 0; i < this.images.children.length; i++) {
             this.images.children[i].style.transitionDuration = "0.5s";
@@ -615,11 +573,15 @@ class Deck extends Component {
         
         this.showCaption = setTimeout(() => {
             this.finishCaptionTrans();
-        }, 300);
+        }, 500);
                 
         setTimeout(() => {
             this.scrollInProgress = false;
-            this.startAutoplay();            
+            this.startAutoplay();             
+            this.navButtonsContainer.children[1].style.transitionDuration = null;
+            this.navButtonsContainer.children[1].style.opacity = null;
+            this.navButtonsContainer.children[1].style.filter = null;
+            this.navButtonsContainer.children[1].style.padding = null;
         }, 500);
     }
 
@@ -630,6 +592,11 @@ class Deck extends Component {
         this.stopAutoplay();
        
         this.scrollInProgress = true;
+
+        this.navButtonsContainer.children[0].style.transitionDuration = "0.5s";
+        this.navButtonsContainer.children[0].style.opacity = 1;
+        this.navButtonsContainer.children[0].style.filter = "invert(50%)";
+        this.navButtonsContainer.children[0].style.padding = "0.0%"; 
        
         for (let i = 0; i < this.images.children.length; i++) {
             this.images.children[i].style.transitionDuration = "0.5s";
@@ -647,11 +614,15 @@ class Deck extends Component {
 
         this.showCaption = setTimeout(() => {
             this.finishCaptionTrans();
-        }, 300);        
+        }, 500);        
         
         setTimeout(() => {
             this.scrollInProgress = false;            
             this.startAutoplay();
+            this.navButtonsContainer.children[0].style.transitionDuration = null;
+            this.navButtonsContainer.children[0].style.opacity = null;
+            this.navButtonsContainer.children[0].style.filter = null;
+            this.navButtonsContainer.children[0].style.padding = null;
         }, 500);
     }
     
@@ -773,9 +744,7 @@ class Deck extends Component {
                         }                   
                     </div>
                     <div ref={(refId) => (this.touchArea = refId)} className="touchArea"></div>
-                </div>
-               
-                
+                </div>         
             </Fragment>
         )
     }
