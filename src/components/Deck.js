@@ -2,13 +2,19 @@ import React, { Component, Fragment } from "react";
 import Card from "./Card.js";
 import leftArrow from '../images/left-chevron.png';
 import rightArrow from '../images/right-chevron.png';
+import plus from '../images/plus-square-regular.svg';
+import minus from '../images/minus-square-regular.svg';
+
 import AppData from '../AppData';
 
 
 class Deck extends Component {
     constructor(props) {
         super(props);
-        this.state = AppData;       
+        this.state = {
+            deck: AppData,
+            slidesQty: 3
+        }       
     }
     
     componentDidMount() {       
@@ -27,27 +33,28 @@ class Deck extends Component {
         /* ********************* Responsive Code ******************** */
 
         // Set prefered quantity of slides per viewport (will be adjusted to maintain best result)        
-        const imgQty = 6;
+        const imgQty = 2;
         this.imgToShow = (this.images.children.length % 2 === 0 && 
             imgQty >= this.images.children.length) ? 
             (this.images.children.length - 1) : (this.images.children.length);
             this.imgToShow = (imgQty > this.imgToShow) ? this.imgToShow : (imgQty > 5) ? 5 : imgQty;   
 
-        const imgToShowMem = this.imgToShow;
+        // const imgToShowMem = this.imgToShow;
+        this.imgToShowMem = this.imgToShow;
         let imgWidthAsPercentage;
        
         let runDeclaration = () => {
 
-            if (window.innerWidth < 1025 && imgToShowMem > 2) {
+            if (window.innerWidth < 1025 && this.imgToShowMem > 2) {
                 this.imgToShow = 2;
-            } else if (window.innerWidth < 1201 && imgToShowMem > 3) {
+            } else if (window.innerWidth < 1201 && this.imgToShowMem > 3) {
                 this.imgToShow = 3;
-            } else if (window.innerWidth < 1501 && imgToShowMem > 4) {
+            } else if (window.innerWidth < 1501 && this.imgToShowMem > 4) {
                 this.imgToShow = 4;
             } else {
-                this.imgToShow = imgToShowMem;
+                this.imgToShow = this.imgToShowMem;
             }
-        
+// this.imgToShow = this.state.slidesQty;
             imgWidthAsPercentage = 100 / this.imgToShow;
             imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;  
     
@@ -603,6 +610,40 @@ class Deck extends Component {
     
     /* ********************************************************** */
     
+    /* ****************** Slides amount selection *************** */
+
+    handlePlus = () => {
+        this.viewPort.style.transitionDuration = "0.7s"; 
+       
+        this.imgToShowMem += 1;
+        //this.setState({slidesQty: 5});       
+        var evt = window.document.createEvent('UIEvents'); 
+        evt.initUIEvent('resize', true, false, window, 0); 
+        window.dispatchEvent(evt); 
+        
+        setTimeout(() => {
+            this.viewPort.style.transitionDuration = null
+        }, 700);
+    }
+
+    handleMinus = () => {
+        this.viewPort.style.transitionDuration = "0.7s"; 
+
+        this.imgToShowMem -= 1;
+        //this.setState({slidesQty: 2});        
+        // window.dispatchEvent(new Event('resize'));       
+        var evt = window.document.createEvent('UIEvents'); 
+        evt.initUIEvent('resize', true, false, window, 0); 
+        window.dispatchEvent(evt);  
+        
+        setTimeout(() => {
+            this.viewPort.style.transitionDuration = null
+        }, 700);
+    }
+
+
+    /* ********************************************************** */
+
     /* ********************* Selection Navigation *************** */
 
     handleSelection = event => {
@@ -703,7 +744,7 @@ class Deck extends Component {
                 </div>
                 <div ref={refId => this.viewPort = refId} className="viewPort">
                     <div ref={refId => this.images = refId} className="imagesContainer"> 
-                        {this.state.cards.map((item, index) => {
+                        {this.state.deck.cards.map((item, index) => {
                                 return (
                                     <Card source={`${item.src}`} title={`${item.title}`} caption={`${item.caption}`} id={index} key={index} />                                    
                                 )
@@ -713,13 +754,17 @@ class Deck extends Component {
                     </div>
                     <div onClick={this.handleSelection} ref={refId => this.selectionButtonsContainer = refId} className="selectionButtonsContainer">
                         {
-                            this.state.cards.map((_, i) => {
+                            this.state.deck.cards.map((_, i) => {
                                 return (<div className="selectionButton" key={i}></div>)
                             })
                         }                   
                     </div>
                     <div ref={(refId) => (this.touchArea = refId)} className="touchArea"></div>
-                </div>         
+                </div>
+                <div ref={refId => this.sizeButtonsContainer = refId} className="sizeButtonsContainer">
+                    <img onClick={this.handlePlus} ref={refId => this.buttonPlus = refId} className="sizeButton" src={plus} alt="plus" id="plus" />
+                    <img onClick={this.handleMinus} ref={refId => this.buttonMinus = refId} className="sizeButton" src={minus} alt="minus" id="minus" />
+                </div>       
             </Fragment>
         )
     }
