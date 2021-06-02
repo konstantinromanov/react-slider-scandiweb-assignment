@@ -13,7 +13,7 @@ class Deck extends Component {
         super(props);
         this.state = {
             deck: AppData,
-            slidesQty: 3
+            
         }       
     }
     
@@ -32,29 +32,27 @@ class Deck extends Component {
 
         /* ********************* Responsive Code ******************** */
 
-        // Set prefered quantity of slides per viewport (will be adjusted to maintain best result)        
-        const imgQty = 2;
-        this.imgToShow = (this.images.children.length % 2 === 0 && 
-            imgQty >= this.images.children.length) ? 
-            (this.images.children.length - 1) : (this.images.children.length);
-            this.imgToShow = (imgQty > this.imgToShow) ? this.imgToShow : (imgQty > 5) ? 5 : imgQty;   
-
-        // const imgToShowMem = this.imgToShow;
-        this.imgToShowMem = this.imgToShow;
+        this.imgToShowMem = 2;
+        this.maxSlides = 5;
+        this.minSlides = 1;
         let imgWidthAsPercentage;
        
         let runDeclaration = () => {
 
-            if (window.innerWidth < 1025 && this.imgToShowMem > 2) {
-                this.imgToShow = 2;
-            } else if (window.innerWidth < 1201 && this.imgToShowMem > 3) {
-                this.imgToShow = 3;
-            } else if (window.innerWidth < 1501 && this.imgToShowMem > 4) {
-                this.imgToShow = 4;
-            } else {
-                this.imgToShow = this.imgToShowMem;
+            let winWidth = window.innerWidth;
+            console.log(winWidth);
+            switch (true) {
+                case winWidth < 1025 && this.imgToShowMem > 2 : this.imgToShow = 2;
+                break;
+                case winWidth < 1201 && this.imgToShowMem > 3 : this.imgToShow = 3;
+                break;
+                case winWidth < 1501 && this.imgToShowMem > 4 : this.imgToShow = 4;
+                break;
+                case this.imgToShowMem <= this.maxSlides : this.imgToShow = this.imgToShowMem;
+                break;
+                default: this.imgToShow = this.maxSlides;
             }
-// this.imgToShow = this.state.slidesQty;
+
             imgWidthAsPercentage = 100 / this.imgToShow;
             imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;  
     
@@ -82,7 +80,7 @@ class Deck extends Component {
         
         runDeclaration();      
        
-        let handleResize = () => {
+        this.handleResize = () => {
             runDeclaration();            
 
             for (let i = 0; i < this.images.children.length; i++) {
@@ -90,7 +88,7 @@ class Deck extends Component {
             }           
         }
 
-        window.addEventListener("resize", handleResize);
+        window.addEventListener("resize", this.handleResize);
 
         /* ************************************************************************ */
         
@@ -614,12 +612,21 @@ class Deck extends Component {
 
     handlePlus = () => {
         this.viewPort.style.transitionDuration = "0.7s"; 
-       
-        this.imgToShowMem += 1;
+        if (this.imgToShowMem < this.maxSlides) {
+            this.imgToShowMem += 1;
+        } 
+        if (this.maxSlides === this.imgToShowMem) {
+            this.buttonPlus.style.opacity = 0.2;
+        } 
+        if (this.imgToShowMem > this.minSlides) {
+            this.buttonMinus.style.opacity = null;
+        }
+        
         //this.setState({slidesQty: 5});       
-        var evt = window.document.createEvent('UIEvents'); 
-        evt.initUIEvent('resize', true, false, window, 0); 
-        window.dispatchEvent(evt); 
+        // var evt = window.document.createEvent('UIEvents'); 
+        // evt.initUIEvent('resize', true, false, window, 0); 
+        // window.dispatchEvent(evt); 
+        this.handleResize();
         
         setTimeout(() => {
             this.viewPort.style.transitionDuration = null
@@ -628,13 +635,22 @@ class Deck extends Component {
 
     handleMinus = () => {
         this.viewPort.style.transitionDuration = "0.7s"; 
-
-        this.imgToShowMem -= 1;
+        if (this.imgToShowMem > this.minSlides) {
+            this.imgToShowMem -= 1;
+        }
+        if (this.imgToShowMem === this.minSlides) {
+            this.buttonMinus.style.opacity = 0.2;
+        }
+        if (this.imgToShowMem < this.maxSlides) {
+            this.buttonPlus.style.opacity = null;
+        }
+        
         //this.setState({slidesQty: 2});        
         // window.dispatchEvent(new Event('resize'));       
-        var evt = window.document.createEvent('UIEvents'); 
-        evt.initUIEvent('resize', true, false, window, 0); 
-        window.dispatchEvent(evt);  
+        // var evt = window.document.createEvent('UIEvents'); 
+        // evt.initUIEvent('resize', true, false, window, 0); 
+        // window.dispatchEvent(evt);  
+        this.handleResize();
         
         setTimeout(() => {
             this.viewPort.style.transitionDuration = null
