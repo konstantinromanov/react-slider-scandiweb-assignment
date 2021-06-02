@@ -15,7 +15,14 @@ class Deck extends Component {
 
         this.numberOfCardsByIndex = this.images.children.length - 1;
         this.middleCardByIndex = Math.floor((this.numberOfCardsByIndex + 2) / 2);
-        this.currentCard = this.middleCardByIndex - 1;        
+        this.currentCard = this.middleCardByIndex - 1;   
+        this.lastPositions = [];     
+
+        // cloning first and last slide for smooth transition between first and last slide
+        this.images.insertAdjacentHTML("afterbegin", this.images.children[this.numberOfCardsByIndex].outerHTML);        
+        this.images.insertAdjacentHTML("beforeend", this.images.children[1].outerHTML);
+
+        let mobDevice = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         /* ********************* Responsive Code ******************** */
 
@@ -27,49 +34,10 @@ class Deck extends Component {
             this.imgToShow = (imgQty > this.imgToShow) ? this.imgToShow : (imgQty > 5) ? 5 : imgQty;   
 
         const imgToShowMem = this.imgToShow;
-
-        if (window.innerWidth < 1025 && imgToShowMem > 2) {
-            this.imgToShow = 2;
-        } else if (window.innerWidth < 1201 && imgToShowMem > 3) {
-            this.imgToShow = 3;
-        } else if (window.innerWidth < 1501 && imgToShowMem > 4) {
-            this.imgToShow = 4;
-        } else {
-            this.imgToShow = imgToShowMem;
-        }
-    
-        let imgWidthAsPercentage = 100 / this.imgToShow;
-        imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;  
-
-        this.newWidth = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ?
-            (imgWidthAsPercentage / 100) * window.screen.width :
-            (imgWidthAsPercentage / 100) * window.innerWidth;
-        this.images.style.width = `${this.newWidth}px`;    
-        
-        this.viewPort.style.height = `${this.newWidth / 1.5 + 90}px`;
+        let imgWidthAsPercentage;
        
-        this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
-        this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
+        let runDeclaration = () => {
 
-        // cloning first and last slide for smooth transition between first and last slide
-        this.images.insertAdjacentHTML("afterbegin", this.images.children[this.numberOfCardsByIndex].outerHTML);        
-        this.images.insertAdjacentHTML("beforeend", this.images.children[1].outerHTML);   
-   
-        for(let i = 0; i < this.images.children.length - 2; i++) {
-            this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";    
-            this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.03}px`; 
-            this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.007}px`;
-        }
-                
-        this.orderCards();    
-      
-        this.rightBoundary = parseFloat(this.images.children[this.numberOfCardsByIndex + 2].style.left) + this.newWidth;
-        this.leftBoundary = parseFloat(this.images.children[0].style.left) - this.newWidth;
-
-        this.lastPositions = [];
-
-        window.addEventListener("resize", () => {            
-    
             if (window.innerWidth < 1025 && imgToShowMem > 2) {
                 this.imgToShow = 2;
             } else if (window.innerWidth < 1201 && imgToShowMem > 3) {
@@ -79,41 +47,48 @@ class Deck extends Component {
             } else {
                 this.imgToShow = imgToShowMem;
             }
-
+        
             imgWidthAsPercentage = 100 / this.imgToShow;
-            imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;
-   
-            this.newWidth = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ?
+            imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;  
+    
+            this.newWidth = mobDevice ?
                 (imgWidthAsPercentage / 100) * window.screen.width :
-                (imgWidthAsPercentage / 100) * window.innerWidth; 
-                   
-            this.images.style.width = `${this.newWidth}px`; 
+                (imgWidthAsPercentage / 100) * window.innerWidth;
+            this.images.style.width = `${this.newWidth}px`;    
+            
+            this.viewPort.style.height = `${this.newWidth / 1.5 + 90}px`;
            
-            this.viewPort.style.height = `${this.newWidth / 1.5 + 90}px`;  
-               
             this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
             this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
-          
+            
             for(let i = 0; i < this.images.children.length - 2; i++) {
-                this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";  
+                this.selectionButtonsContainer.children[i].transitionDuration = "0.0s";    
                 this.selectionButtonsContainer.children[i].style.width = `${this.newWidth * 0.03}px`; 
                 this.selectionButtonsContainer.children[i].style.height = `${this.newWidth * 0.007}px`;
             }
-            
-            this.orderCards();
-            
+                    
+            this.orderCards();    
+          
             this.rightBoundary = parseFloat(this.images.children[this.numberOfCardsByIndex + 2].style.left) + this.newWidth;
             this.leftBoundary = parseFloat(this.images.children[0].style.left) - this.newWidth;
+        }
+        
+        runDeclaration();      
+       
+        let handleResize = () => {
+            runDeclaration();            
 
             for (let i = 0; i < this.images.children.length; i++) {
                 this.lastPositions[i] = parseFloat(this.images.children[i].style.left);            
-            }
-        });
+            }           
+        }
+
+        window.addEventListener("resize", handleResize);
+
+        /* ************************************************************************ */
         
         /* ********** Hide mouse cursor above viewport when not moving ************* */
-                
-        let mobDevice = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
+                  
         if (!mobDevice) {
             let justHidden = false;
             let j;
@@ -179,7 +154,7 @@ class Deck extends Component {
         /* ******** Pause slider when browser tab is switched to another ********* */
 
         // Set the name of the hidden property and the change event for visibility
-        var hidden, visibilityChange;
+        let hidden, visibilityChange;
         if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
             hidden = "hidden";
             visibilityChange = "visibilitychange";
@@ -193,7 +168,7 @@ class Deck extends Component {
         
         // If the page is hidden, pause the slider;
         // if the page is shown, play the slider.
-        var handleVisibilityChange = () => {
+        let handleVisibilityChange = () => {
             if (document[hidden]) {                
                 this.stopAutoplay();                    
             } else {
