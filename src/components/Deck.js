@@ -35,12 +35,13 @@ class Deck extends Component {
         this.imgToShowMem = 2;
         this.maxSlides = 5;
         this.minSlides = 1;
+
         let imgWidthAsPercentage;
        
-        let runDeclaration = () => {
+        this.handleResize = () => {
 
             let winWidth = window.innerWidth;
-            console.log(winWidth);
+            
             switch (true) {
                 case winWidth < 1025 && this.imgToShowMem > 2 : this.imgToShow = 2;
                 break;
@@ -76,22 +77,20 @@ class Deck extends Component {
           
             this.rightBoundary = parseFloat(this.images.children[this.numberOfCardsByIndex + 2].style.left) + this.newWidth;
             this.leftBoundary = parseFloat(this.images.children[0].style.left) - this.newWidth;
-        }
-        
-        runDeclaration();      
-       
-        this.handleResize = () => {
-            runDeclaration();            
 
             for (let i = 0; i < this.images.children.length; i++) {
-                this.lastPositions[i] = parseFloat(this.images.children[i].style.left);            
-            }           
+                this.lastPositions[i] = parseFloat(this.images.children[i].style.left);                                        
+            }
         }
+        
+        this.handleResize();
 
         window.addEventListener("resize", this.handleResize);
 
         /* ************************************************************************ */
-        
+
+        this.updateSelection();
+
         /* ********** Hide mouse cursor above viewport when not moving ************* */
                   
         if (!mobDevice) {
@@ -191,7 +190,7 @@ class Deck extends Component {
 
         /* ********************************************************** */
 
-        this.updateSelection();
+        
         
         /* ***************************** Wheel navigation ******************* */
 
@@ -219,10 +218,6 @@ class Deck extends Component {
                 
         this.distanceScrolled = 0;
         this.frameCounter = 0;
-
-        for (let i = 0; i < this.images.children.length; i++) {
-            this.lastPositions.push(parseFloat(this.images.children[i].style.left));            
-        }
 
         this.touchArea.addEventListener("touchstart", this.handleTouchStart, {
             passive: false,
@@ -452,8 +447,8 @@ class Deck extends Component {
         }
 
         for (let i = 0; i < this.images.children.length; i++) {
-        this.updatedPosition = this.lastPositions[i] + (percentageToMove * this.distanceToScroll);
-        this.images.children[i].style.left = `${this.updatedPosition}px`;            
+            this.updatedPosition = this.lastPositions[i] + (percentageToMove * this.distanceToScroll);
+            this.images.children[i].style.left = `${this.updatedPosition}px`;            
         }
         
         this.seed += 1 * this.snapSpeedModifier;
