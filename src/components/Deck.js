@@ -31,45 +31,33 @@ class Deck extends Component {
         let mobDevice = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         /* ********************* Responsive Code ******************** */
-
-        // this.imgToShowMem = 6;
-        // this.maxSlides = 6;
-        // this.minSlides;
+       
         this.imgToShow = 2;
-
-        let imgWidthAsPercentage;
-        let maxIimgWidthAsPercentage;
-        let maxWidthCheck;
-        let maxCardWidth;
-        let maxHeightCheck;
-        let minCardHeight = 300;
+        let minCardHeight = 400;
+        let captionHeight = 90;
+        let slideAspectRatio = 3 / 2;
 
         this.handleResize = () => {
+           
+            let winWidth = mobDevice ?  window.screen.width : window.innerWidth;
+            let winHeight = window.innerHeight; 
+            let imgWidthAsPercentage; 
+            let newWidth;
+            let boundaryViewportWidth;
+            let boundaryViewportHeight;
 
-            let maxSlides = 8;
-            let minSlides = 2;
-            let winWidth = window.innerWidth;
-            let winHeight = window.innerHeight;            
+            // Minimum amount of slides on screen
+            boundaryViewportHeight = winHeight;
+            newWidth = (boundaryViewportHeight - captionHeight) * slideAspectRatio;
+            imgWidthAsPercentage = newWidth / winWidth * 100;
+            this.minSlides = Math.ceil(100 / imgWidthAsPercentage);
 
-            for (let i = maxSlides; i >= minSlides; i--) {
-                maxIimgWidthAsPercentage = window.innerWidth < 768 ? 100 : (100 / (i)); 
-                maxWidthCheck = (maxIimgWidthAsPercentage / 100) * (mobDevice ?  window.screen.width : window.innerWidth);
-                maxHeightCheck = `${maxWidthCheck / 1.5 + 90}px`;
-                if (parseFloat(maxHeightCheck) > winHeight) break;
-                this.minSlides = i;                               
-            }
+            // Maximum amount of slides on screen
+            boundaryViewportWidth = (minCardHeight - captionHeight) * slideAspectRatio;
+            newWidth = boundaryViewportWidth;
+            imgWidthAsPercentage = newWidth / winWidth * 100;
+            this.maxSlides = Math.floor(100 / imgWidthAsPercentage);
 
-            for (let i = minSlides; i <= maxSlides; i++) {
-                maxIimgWidthAsPercentage = window.innerWidth < 768 ? 100 : (100 / (i)); 
-                maxWidthCheck = (maxIimgWidthAsPercentage / 100) * (mobDevice ?  window.screen.width : window.innerWidth);
-                maxCardWidth = `${maxWidthCheck}px`;
-                if (parseFloat(maxCardWidth) < minCardHeight) break;                
-                this.maxSlides = i;                               
-            }
-            
-            // this.maxSlides = Math.floor(winWidth / ((300 - 90) * 1.5));           
-            // this.minSlides = Math.floor(winWidth / (((winHeight - 90) * 1.5)));
-                      
             switch (true) {
                 case winWidth < 1025 && this.imgToShow > 2 : this.imgToShow = 2;
                 break;
@@ -82,11 +70,15 @@ class Deck extends Component {
 
             this.buttonMinus.style.opacity = null;
             this.buttonPlus.style.opacity = null;
-            if (this.imgToShow <= this.minSlides) {
+
+            if (this.minSlides === this.maxSlides) {
                 this.imgToShow = this.minSlides;
                 this.buttonMinus.style.opacity = 0.2;
-            }
-            if (this.imgToShow >= this.maxSlides) {
+                this.buttonPlus.style.opacity = 0.2;
+            } else if (this.imgToShow <= this.minSlides) {
+                this.imgToShow = this.minSlides;
+                this.buttonMinus.style.opacity = 0.2;
+            } else if (this.imgToShow >= this.maxSlides) {
                 this.imgToShow = this.maxSlides;
                 this.buttonPlus.style.opacity = 0.2;
             }
@@ -94,7 +86,7 @@ class Deck extends Component {
             imgWidthAsPercentage = window.innerWidth < 768 ? 100 : (100 / this.imgToShow); 
             this.newWidth = (imgWidthAsPercentage / 100) * (mobDevice ?  window.screen.width : window.innerWidth);
             this.images.style.width = `${this.newWidth}px`;  
-            this.viewPort.style.height = `${this.newWidth / 1.5 + 90}px`;
+            this.viewPort.style.height = `${this.newWidth / slideAspectRatio + captionHeight}px`;
 
             this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
             this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
@@ -645,40 +637,32 @@ class Deck extends Component {
     /* ****************** Slides amount selection *************** */
 
     handlePlus = () => {
+        this.stopAutoplay();
         this.viewPort.style.transitionDuration = "0.7s"; 
         if (this.imgToShow < this.maxSlides) {
             this.imgToShow += 1;
         } 
-        // if (this.imgToShow === this.maxSlides) {
-        //     this.buttonPlus.style.opacity = 0.2;
-        // } 
-        // if (this.imgToShow > this.minSlides) {
-        //     this.buttonMinus.style.opacity = null;
-        // }
 
         this.handleResize();
         
         setTimeout(() => {
-            this.viewPort.style.transitionDuration = null
+            this.viewPort.style.transitionDuration = null;
+            this.startAutoplay();
         }, 700);
     }
 
     handleMinus = () => {
+        this.stopAutoplay();
         this.viewPort.style.transitionDuration = "0.7s"; 
         if (this.imgToShow > this.minSlides) {
             this.imgToShow -= 1;
         }
-        // if (this.imgToShow === this.minSlides) {
-        //     this.buttonMinus.style.opacity = 0.2;
-        // }
-        // if (this.imgToShow < this.maxSlides) {
-        //     this.buttonPlus.style.opacity = null;
-        // }
         
         this.handleResize();
         
         setTimeout(() => {
-            this.viewPort.style.transitionDuration = null
+            this.viewPort.style.transitionDuration = null;
+            this.startAutoplay();
         }, 700);
     }
 
