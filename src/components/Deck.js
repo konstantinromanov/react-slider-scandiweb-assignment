@@ -32,38 +32,70 @@ class Deck extends Component {
 
         /* ********************* Responsive Code ******************** */
 
-        this.imgToShowMem = 2;
-        this.maxSlides = 5;
-        this.minSlides = 1;
+        // this.imgToShowMem = 6;
+        // this.maxSlides = 6;
+        // this.minSlides;
+        this.imgToShow = 2;
 
         let imgWidthAsPercentage;
-       
+        let maxIimgWidthAsPercentage;
+        let maxWidthCheck;
+        let maxCardWidth;
+        let maxHeightCheck;
+        let minCardHeight = 300;
+
         this.handleResize = () => {
 
+            let maxSlides = 8;
+            let minSlides = 2;
             let winWidth = window.innerWidth;
-            
-            switch (true) {
-                case winWidth < 1025 && this.imgToShowMem > 2 : this.imgToShow = 2;
-                break;
-                case winWidth < 1201 && this.imgToShowMem > 3 : this.imgToShow = 3;
-                break;
-                case winWidth < 1501 && this.imgToShowMem > 4 : this.imgToShow = 4;
-                break;
-                case this.imgToShowMem <= this.maxSlides : this.imgToShow = this.imgToShowMem;
-                break;
-                default: this.imgToShow = this.maxSlides;
+            let winHeight = window.innerHeight;            
+
+            for (let i = maxSlides; i >= minSlides; i--) {
+                maxIimgWidthAsPercentage = window.innerWidth < 768 ? 100 : (100 / (i)); 
+                maxWidthCheck = (maxIimgWidthAsPercentage / 100) * (mobDevice ?  window.screen.width : window.innerWidth);
+                maxHeightCheck = `${maxWidthCheck / 1.5 + 90}px`;
+                if (parseFloat(maxHeightCheck) > winHeight) break;
+                this.minSlides = i;                               
             }
 
-            imgWidthAsPercentage = 100 / this.imgToShow;
-            imgWidthAsPercentage = window.innerWidth < 768 ? 100 : imgWidthAsPercentage;  
-    
-            this.newWidth = mobDevice ?
-                (imgWidthAsPercentage / 100) * window.screen.width :
-                (imgWidthAsPercentage / 100) * window.innerWidth;
-            this.images.style.width = `${this.newWidth}px`;    
-            
-            this.viewPort.style.height = `${this.newWidth / 1.5 + 90}px`;
+            for (let i = minSlides; i <= maxSlides; i++) {
+                maxIimgWidthAsPercentage = window.innerWidth < 768 ? 100 : (100 / (i)); 
+                maxWidthCheck = (maxIimgWidthAsPercentage / 100) * (mobDevice ?  window.screen.width : window.innerWidth);
+                maxCardWidth = `${maxWidthCheck}px`;
+                if (parseFloat(maxCardWidth) < minCardHeight) break;                
+                this.maxSlides = i;                               
+            }
+            console.log(this.minSlides, this.maxSlides, this.imgToShow);
+            // this.maxSlides = Math.floor(winWidth / ((300 - 90) * 1.5));           
+            // this.minSlides = Math.floor(winWidth / (((winHeight - 90) * 1.5)));
            
+            imgWidthAsPercentage = window.innerWidth < 768 ? 100 : (100 / this.imgToShow); 
+            this.newWidth = (imgWidthAsPercentage / 100) * (mobDevice ?  window.screen.width : window.innerWidth);
+            this.images.style.width = `${this.newWidth}px`;  
+            this.viewPort.style.height = `${this.newWidth / 1.5 + 90}px`;
+
+            switch (true) {
+                case winWidth < 1025 && this.imgToShow > 2 : this.imgToShow = 2;
+                break;
+                case winWidth < 1201 && this.imgToShow > 3 : this.imgToShow = 3;
+                break;
+                case winWidth < 1501 && this.imgToShow > 4 : this.imgToShow = 4;
+                break;
+                default: this.imgToShow = this.imgToShow;
+            }
+
+            this.buttonMinus.style.opacity = null;
+            this.buttonPlus.style.opacity = null;
+            if (this.imgToShow <= this.minSlides) {
+                this.imgToShow = this.minSlides;
+                this.buttonMinus.style.opacity = 0.2;
+            }
+            if (this.imgToShow >= this.maxSlides) {
+                this.imgToShow = this.maxSlides;
+                this.buttonPlus.style.opacity = 0.2;
+            }
+            
             this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
             this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
             
@@ -189,8 +221,6 @@ class Deck extends Component {
         }
 
         /* ********************************************************** */
-
-        
         
         /* ***************************** Wheel navigation ******************* */
 
@@ -607,20 +637,16 @@ class Deck extends Component {
 
     handlePlus = () => {
         this.viewPort.style.transitionDuration = "0.7s"; 
-        if (this.imgToShowMem < this.maxSlides) {
-            this.imgToShowMem += 1;
+        if (this.imgToShow < this.maxSlides) {
+            this.imgToShow += 1;
         } 
-        if (this.maxSlides === this.imgToShowMem) {
-            this.buttonPlus.style.opacity = 0.2;
-        } 
-        if (this.imgToShowMem > this.minSlides) {
-            this.buttonMinus.style.opacity = null;
-        }
-        
-        //this.setState({slidesQty: 5});       
-        // var evt = window.document.createEvent('UIEvents'); 
-        // evt.initUIEvent('resize', true, false, window, 0); 
-        // window.dispatchEvent(evt); 
+        // if (this.imgToShow === this.maxSlides) {
+        //     this.buttonPlus.style.opacity = 0.2;
+        // } 
+        // if (this.imgToShow > this.minSlides) {
+        //     this.buttonMinus.style.opacity = null;
+        // }
+
         this.handleResize();
         
         setTimeout(() => {
@@ -630,21 +656,16 @@ class Deck extends Component {
 
     handleMinus = () => {
         this.viewPort.style.transitionDuration = "0.7s"; 
-        if (this.imgToShowMem > this.minSlides) {
-            this.imgToShowMem -= 1;
+        if (this.imgToShow > this.minSlides) {
+            this.imgToShow -= 1;
         }
-        if (this.imgToShowMem === this.minSlides) {
-            this.buttonMinus.style.opacity = 0.2;
-        }
-        if (this.imgToShowMem < this.maxSlides) {
-            this.buttonPlus.style.opacity = null;
-        }
+        // if (this.imgToShow === this.minSlides) {
+        //     this.buttonMinus.style.opacity = 0.2;
+        // }
+        // if (this.imgToShow < this.maxSlides) {
+        //     this.buttonPlus.style.opacity = null;
+        // }
         
-        //this.setState({slidesQty: 2});        
-        // window.dispatchEvent(new Event('resize'));       
-        // var evt = window.document.createEvent('UIEvents'); 
-        // evt.initUIEvent('resize', true, false, window, 0); 
-        // window.dispatchEvent(evt);  
         this.handleResize();
         
         setTimeout(() => {
