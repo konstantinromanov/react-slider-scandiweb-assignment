@@ -184,6 +184,15 @@ class Deck extends Component {
             }, 500);
             
         }, true);
+
+        document.addEventListener( "keydown", function( event ) {
+            if( event.code == "ArrowUp" ) {
+                document.getElementsByClassName("sizeButton")[0].click();
+            }
+            if( event.code == "ArrowDown" ) {
+                document.getElementsByClassName("sizeButton")[1].click(); 
+            }
+        }, true);
         
         /* ********************************************************** */
 
