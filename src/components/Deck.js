@@ -66,15 +66,10 @@ class Deck extends Component {
                 if (parseFloat(maxCardWidth) < minCardHeight) break;                
                 this.maxSlides = i;                               
             }
-            console.log(this.minSlides, this.maxSlides, this.imgToShow);
+            
             // this.maxSlides = Math.floor(winWidth / ((300 - 90) * 1.5));           
             // this.minSlides = Math.floor(winWidth / (((winHeight - 90) * 1.5)));
-           
-            imgWidthAsPercentage = window.innerWidth < 768 ? 100 : (100 / this.imgToShow); 
-            this.newWidth = (imgWidthAsPercentage / 100) * (mobDevice ?  window.screen.width : window.innerWidth);
-            this.images.style.width = `${this.newWidth}px`;  
-            this.viewPort.style.height = `${this.newWidth / 1.5 + 90}px`;
-
+                      
             switch (true) {
                 case winWidth < 1025 && this.imgToShow > 2 : this.imgToShow = 2;
                 break;
@@ -96,6 +91,11 @@ class Deck extends Component {
                 this.buttonPlus.style.opacity = 0.2;
             }
             
+            imgWidthAsPercentage = window.innerWidth < 768 ? 100 : (100 / this.imgToShow); 
+            this.newWidth = (imgWidthAsPercentage / 100) * (mobDevice ?  window.screen.width : window.innerWidth);
+            this.images.style.width = `${this.newWidth}px`;  
+            this.viewPort.style.height = `${this.newWidth / 1.5 + 90}px`;
+
             this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
             this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
             
