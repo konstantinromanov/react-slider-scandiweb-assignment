@@ -8,6 +8,7 @@ Complete with auto-play, responsive, and manual navigation buttons. Supports swi
 * The Slider suppports swipes.
 * Works for any HTML content.
 * Supports multiple slides on screen. With navigation buttons changes amount of slides.
+* Supports infinite option.
 * Supports scrolling to a selected slide (bullet points navigation).
 * Keyboard navigation with arrows (changes slides and amount of slides in the viewport).
 * Mouse scroll navigation, when mouse is above the viewport.
@@ -19,7 +20,7 @@ Complete with auto-play, responsive, and manual navigation buttons. Supports swi
 * Title and caption are automatically shown only on the central slide.
 * While slides are zoomed out, the central slides shows only title without caption.
 
-Here ir the published slider https://konstantinromanov.github.io/responsive_react_slider_with_navigation_and_autoplay/ 
+Here is the published [slider](https://konstantinromanov.github.io/responsive_react_slider_with_navigation_and_autoplay/) 
 
 All the photographes used in the slider are copyrighted and belong to myself.
 
