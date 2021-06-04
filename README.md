@@ -8,6 +8,7 @@ Complete with auto-play, responsive, and manual navigation buttons. Supports swi
 * The Slider suppports swipes.
 * Works for any HTML content.
 * Supports multiple slides on screen. With navigation buttons changes amount of slides.
+* Supports infinite option.
 * Supports scrolling to a selected slide (bullet points navigation).
 * Keyboard navigation with arrows (changes slides and amount of slides in the viewport).
 * Mouse scroll navigation, when mouse is above the viewport.
