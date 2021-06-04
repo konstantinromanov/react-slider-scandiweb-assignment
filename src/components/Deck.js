@@ -231,6 +231,7 @@ class Deck extends Component {
                 passive: false,
             });
         }
+        
         /* ****************************************************************** */
 
         /* ***************************** Touch navigation ******************* */
@@ -342,8 +343,7 @@ class Deck extends Component {
             this.images.insertAdjacentHTML("afterbegin", this.images.children[this.numberOfCardsByIndex].outerHTML);
             this.images.children[0].style.left = `${beginningOfDeck}px`;        
             this.lastPositions.splice(0, 0, this.lastPositions.pop());        
-        }
-        
+        }        
     }
 
     /* ***************************** Wheel navigation ******************* */
@@ -400,8 +400,7 @@ class Deck extends Component {
                 }
             }
                         
-            this.handleBoundaries();    
-                   
+            this.handleBoundaries();                       
             
             this.wheelTimeoutId = setTimeout(() => {
                 this.frameCounter = 0;  
@@ -781,8 +780,7 @@ class Deck extends Component {
                                     <Card source={`${item.src}`} title={`${item.title}`} caption={`${item.caption}`} id={index} key={index} />                                   
                                 )
                             }, this)
-                        } 
-
+                        }
                     </div>
                     <div onClick={this.handleSelection} ref={refId => this.selectionButtonsContainer = refId} className="selectionButtonsContainer">
                         {
