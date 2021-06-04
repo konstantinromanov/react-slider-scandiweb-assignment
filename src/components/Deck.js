@@ -54,9 +54,7 @@ class Deck extends Component {
                 this.images.children.length - 2 : Math.floor(100 / imgWidthAsPercentage);
                         
             if (window.innerWidth < 768) {
-                this.imgToShow = 1;
-                // this.buttonMinus.style.opacity = 0.2;
-                // this.buttonPlus.style.opacity = 0.2;
+                this.imgToShow = 1;               
                 this.sizeButtonsContainer.style.visibility = "hidden";
             } else {            
                 this.sizeButtonsContainer.style.visibility = null;    
@@ -231,7 +229,7 @@ class Deck extends Component {
                 passive: false,
             });
         }
-        
+
         /* ****************************************************************** */
 
         /* ***************************** Touch navigation ******************* */

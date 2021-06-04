@@ -16,10 +16,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  overflow: hidden;
-  /* background-color: rgba(57, 57, 151, 0.4); */
-  /* transition:height 0.65s ease-in-out; */
-  
+  overflow: hidden; 
 }
 
 .imagesContainer {
@@ -30,8 +27,7 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  /* background-color: rgba(151, 57, 151, 0.4); */  
+  transform: translate(-50%, -50%);  
   touch-action: auto;
 }
 
@@ -44,8 +40,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 999;
-  /* background-color: rgba(151, 91, 57, 0.4); */
+  z-index: 999;  
 }
 
 .navButtonsContainer {
@@ -61,8 +56,7 @@ body {
   align-items: center;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  z-index: 9999;
-  /* background-color: rgba(60, 151, 57, 0.4); */
+  z-index: 9999;  
 }
 
 .navButton {
@@ -77,10 +71,10 @@ body {
 .navButton:hover {
   transition: 0.5s;
   opacity: 1;
-  padding: 0.3%;  
+  padding: 0.3%;
 }
 
-.navButton:active{
+.navButton:active {
   transition: 0.3s;
   opacity: 1;
   padding: 0px;
@@ -110,9 +104,7 @@ body {
   width: 15px;
   height: 7px;
   border-radius: 5%;
-  /* background-color: rgb(255, 255, 255); */
   opacity: 0.5;
-
   pointer-events: all;
   cursor: pointer;
   z-index: 99999;
@@ -131,79 +123,69 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); 
-  /* border: 3px solid #eee; */
-  /* background-color: rgba(57, 148, 151, 0.4); */
-  background-color: #2b2b2b;  
+  transform: translate(-50%, -50%);  
+  background-color: #2b2b2b;
 }
 
-.cardMat { 
+.cardMat {
   height: calc(100% - 70px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 0;
-  /* border: 1px solid rgb(231, 32, 32); */  
+  z-index: 0;  
 }
 
 .cardImgWrap {
   width: 95%;
-  height: 95%;  
+  height: 95%;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 0;
-  /* border: 1px solid rgb(231, 32, 32); */
+  z-index: 0;  
 }
 
 .cardImg {
   max-width: 100%;
-  max-height: 100%; 
+  max-height: 100%;
 }
 
-.cardCaption {  
-  padding:0 0 0 8px;
+.cardCaption {
+  padding: 0 0 0 8px;
   margin-bottom: 2%;
   text-align: center;
   height: auto;
-  color: rgba(200, 200, 200, 0.6);
-  /* background-color: rgba(200, 200, 200, 0.6); */  
+  color: rgba(200, 200, 200, 0.6);  
   min-height: fit-content;  
-  /* border: 3px solid #73AD21; */
   z-index: 0;
 }
 
-.card h2{
+.card h2 {
   font-size: 1.2rem;
   text-transform: uppercase;
   line-height: 1;
   letter-spacing: 2px;
-  margin: 0 0; 
+  margin: 0 0;
 }
 
-.card p{
- font-size: 1.2rem;  
+.card p {
+  font-size: 1.2rem;
   line-height: 1;
   margin: 0 0;
 }
 
-.sizeButtonsContainer{
-/* margin: 0;
-padding: 0; */
-width: 50%;
-max-width: 400px;
-position: absolute;
-bottom: 10px;
-left: 50%;
-display: flex;
-flex-direction: row;
-justify-content: space-between;
-align-items: center;
-transform: translate(-50%, 0);
-pointer-events: none;
-/* background-color: rgba(101, 175, 40, 0.308); */
-/* background-color: #2b2b2b; */
-background-color: rgba(100, 100, 100, 0.2);
+.sizeButtonsContainer {  
+  width: 50%;
+  max-width: 400px;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  transform: translate(-50%, 0);
+  pointer-events: none;  
+  background-color: rgba(100, 100, 100, 0.2);
 }
 
 .sizeButton {
@@ -214,5 +196,4 @@ background-color: rgba(100, 100, 100, 0.2);
   cursor: pointer;
   padding: 0.7%;
   filter: invert(1);
-
 }
