@@ -20,7 +20,7 @@ Complete with auto-play, responsive, and manual navigation buttons. Supports swi
 * Title and caption are automatically shown only on the central slide.
 * While slides are zoomed out, the central slides shows only title without caption.
 
-Here ir the published slider https://konstantinromanov.github.io/responsive_react_slider_with_navigation_and_autoplay/ 
+Here is the published [slider](https://konstantinromanov.github.io/responsive_react_slider_with_navigation_and_autoplay/) 
 
 All the photographes used in the slider are copyrighted and belong to myself.
 
