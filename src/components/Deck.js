@@ -12,8 +12,7 @@ class Deck extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            deck: AppData,
-            
+            deck: AppData,            
         }       
     }
     
@@ -28,66 +27,61 @@ class Deck extends Component {
         this.images.insertAdjacentHTML("afterbegin", this.images.children[this.numberOfCardsByIndex].outerHTML);        
         this.images.insertAdjacentHTML("beforeend", this.images.children[1].outerHTML);
 
-        let mobDevice = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const mobDevice = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         /* ********************* Responsive Code ******************** */
        
         this.imgToShow = 2;
-        let minCardHeight = 400;
-        let captionHeight = 90;
-        let slideAspectRatio = 3 / 2;
+        const minCardHeight = 300;
+        const captionHeight = 90;
+        const slideAspectRatio = 3 / 2;
 
         this.handleResize = () => {
            
             let winWidth = mobDevice ?  window.screen.width : window.innerWidth;
-            let winHeight = window.innerHeight; 
+            let winHeight = mobDevice ? window.screen.height : window.innerHeight; 
             let imgWidthAsPercentage; 
             let newWidth;
-            let boundaryViewportWidth;
-            let boundaryViewportHeight;
 
             // Minimum amount of slides on screen
-            boundaryViewportHeight = winHeight;
-            newWidth = (boundaryViewportHeight - captionHeight) * slideAspectRatio;
+            newWidth = (winHeight - captionHeight) * slideAspectRatio;
             imgWidthAsPercentage = newWidth / winWidth * 100;
             this.minSlides = Math.ceil(100 / imgWidthAsPercentage);
-
             // Maximum amount of slides on screen
-            boundaryViewportWidth = (minCardHeight - captionHeight) * slideAspectRatio;
-            newWidth = boundaryViewportWidth;
+            newWidth = (minCardHeight - captionHeight) * slideAspectRatio;
             imgWidthAsPercentage = newWidth / winWidth * 100;
-            this.maxSlides = Math.floor(100 / imgWidthAsPercentage);
-
-            switch (true) {
-                case winWidth < 1025 && this.imgToShow > 2 : this.imgToShow = 2;
-                break;
-                case winWidth < 1201 && this.imgToShow > 3 : this.imgToShow = 3;
-                break;
-                case winWidth < 1501 && this.imgToShow > 4 : this.imgToShow = 4;
-                break;
-                default: this.imgToShow = this.imgToShow;
+            this.maxSlides = this.images.children.length - 2 < Math.floor(100 / imgWidthAsPercentage) ? 
+                this.images.children.length - 2 : Math.floor(100 / imgWidthAsPercentage);
+                        
+            if (window.innerWidth < 768) {
+                this.imgToShow = 1;
+                // this.buttonMinus.style.opacity = 0.2;
+                // this.buttonPlus.style.opacity = 0.2;
+                this.sizeButtonsContainer.style.visibility = "hidden";
+            } else {            
+                this.sizeButtonsContainer.style.visibility = null;    
+                this.buttonMinus.style.opacity = null;
+                this.buttonPlus.style.opacity = null;
+                if (this.minSlides >= this.maxSlides) {
+                    this.imgToShow = this.maxSlides;
+                    this.sizeButtonsContainer.style.visibility = "hidden";
+                    this.buttonMinus.style.opacity = 0.2;
+                    this.buttonPlus.style.opacity = 0.2;                    
+                } else if (this.imgToShow <= this.minSlides) {
+                    this.imgToShow = this.minSlides;
+                    this.buttonMinus.style.opacity = 0.2;                    
+                } else if (this.imgToShow >= this.maxSlides) {
+                    this.imgToShow = this.maxSlides;
+                    this.buttonPlus.style.opacity = 0.2;                   
+                } 
             }
-
-            this.buttonMinus.style.opacity = null;
-            this.buttonPlus.style.opacity = null;
-
-            if (this.minSlides === this.maxSlides) {
-                this.imgToShow = this.minSlides;
-                this.buttonMinus.style.opacity = 0.2;
-                this.buttonPlus.style.opacity = 0.2;
-            } else if (this.imgToShow <= this.minSlides) {
-                this.imgToShow = this.minSlides;
-                this.buttonMinus.style.opacity = 0.2;
-            } else if (this.imgToShow >= this.maxSlides) {
-                this.imgToShow = this.maxSlides;
-                this.buttonPlus.style.opacity = 0.2;
-            }
-            
-            imgWidthAsPercentage = window.innerWidth < 768 ? 100 : (100 / this.imgToShow); 
+          
+            imgWidthAsPercentage = 100 / this.imgToShow; 
+           
             this.newWidth = (imgWidthAsPercentage / 100) * (mobDevice ?  window.screen.width : window.innerWidth);
             this.images.style.width = `${this.newWidth}px`;  
             this.viewPort.style.height = `${this.newWidth / slideAspectRatio + captionHeight}px`;
-
+                                
             this.buttonPrev.style.width = `${(this.newWidth / 2) * 0.15}px`;
             this.buttonNext.style.width = `${(this.newWidth / 2) * 0.15}px`;
             
@@ -160,6 +154,13 @@ class Deck extends Component {
         /* ******************* Keyboard arrows keys navigation ************** */
 
         document.addEventListener( "keydown", function( event ) {
+
+            if( event.code == "ArrowUp" ) {
+                document.getElementsByClassName("sizeButton")[0].click();
+            }
+            if( event.code == "ArrowDown" ) {
+                document.getElementsByClassName("sizeButton")[1].click(); 
+            }
             
             if (this.scrollInProgress) return; 
             this.scrollInProgress = true;
@@ -175,16 +176,7 @@ class Deck extends Component {
                 this.scrollInProgress = false;                
             }, 500);
             
-        }, true);
-
-        document.addEventListener( "keydown", function( event ) {
-            if( event.code == "ArrowUp" ) {
-                document.getElementsByClassName("sizeButton")[0].click();
-            }
-            if( event.code == "ArrowDown" ) {
-                document.getElementsByClassName("sizeButton")[1].click(); 
-            }
-        }, true);
+        }, true);       
         
         /* ********************************************************** */
 
@@ -382,7 +374,7 @@ class Deck extends Component {
             this.images.children[i].children[1].style.visibility = "hidden"; 
         }
 
-        let difference = event.deltaY * 1.7;
+        let difference = this.imgToShow > 4 ? event.deltaY * 0.65 : event.deltaY * 1.4;
         this.distanceScrolled += difference;
         this.frameCounter += difference;
         
@@ -637,6 +629,8 @@ class Deck extends Component {
     /* ****************** Slides amount selection *************** */
 
     handlePlus = () => {
+        if (this.scrollInProgress) return;
+
         this.stopAutoplay();
         this.viewPort.style.transitionDuration = "0.7s"; 
         if (this.imgToShow < this.maxSlides) {
@@ -652,6 +646,8 @@ class Deck extends Component {
     }
 
     handleMinus = () => {
+        if (this.scrollInProgress) return;
+
         this.stopAutoplay();
         this.viewPort.style.transitionDuration = "0.7s"; 
         if (this.imgToShow > this.minSlides) {
@@ -665,7 +661,6 @@ class Deck extends Component {
             this.startAutoplay();
         }, 700);
     }
-
 
     /* ********************************************************** */
 
@@ -708,13 +703,19 @@ class Deck extends Component {
     startCaptionTrans = () => {
         for (let i = 0; i < this.images.children.length; i++) {            
             this.images.children[i].children[1].style.transitionDuration = "0.0s";
-            this.images.children[i].children[1].style.visibility = "hidden"; 
+            this.images.children[i].children[1].children[0].style.visibility = "hidden"; 
+            this.images.children[i].children[1].children[1].style.visibility = "hidden";             
         }
     }
 
     finishCaptionTrans = () => {
         this.images.children[this.middleCardByIndex].children[1].style.transitionDuration = "0.7s";
-        this.images.children[this.middleCardByIndex].children[1].style.visibility = "visible";        
+        if (parseFloat(this.viewPort.style.height) > 350) {
+            this.images.children[this.middleCardByIndex].children[1].children[0].style.visibility = "visible"; 
+            this.images.children[this.middleCardByIndex].children[1].children[1].style.visibility = "visible"; 
+        } else {
+            this.images.children[this.middleCardByIndex].children[1].children[0].style.visibility = "visible";              
+        }               
     }
     
     /* ********************************************************** */
@@ -727,6 +728,8 @@ class Deck extends Component {
 
         this.autoplayTimeoutId = setTimeout(() => {
             this.autoplayIntervalId = setInterval(() => {
+                
+                this.scrollInProgress = true;
                 this.startCaptionTrans();
 
                 for (let i = 0; i < this.images.children.length; i++) {
@@ -746,6 +749,10 @@ class Deck extends Component {
                 this.showCaption = setTimeout(() => {
                     this.finishCaptionTrans();
                 }, 1200);
+
+                setTimeout(() => {
+                    this.scrollInProgress = false; 
+                }, 500);
 
             }, 5100)
         }, 10500);
@@ -770,8 +777,8 @@ class Deck extends Component {
                 <div ref={refId => this.viewPort = refId} className="viewPort">
                     <div ref={refId => this.images = refId} className="imagesContainer"> 
                         {this.state.deck.cards.map((item, index) => {
-                                return (
-                                    <Card source={`${item.src}`} title={`${item.title}`} caption={`${item.caption}`} id={index} key={index} />                                    
+                                return (                                                                       
+                                    <Card source={`${item.src}`} title={`${item.title}`} caption={`${item.caption}`} id={index} key={index} />                                   
                                 )
                             }, this)
                         } 
